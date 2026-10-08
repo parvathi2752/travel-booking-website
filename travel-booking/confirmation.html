@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your TravelEase booking is confirmed." />
+  <title>Booking Confirmed – TravelEase</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eqjn8fE/qSAkYdn7+RZg7gSvUQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    /* ============================================================
+       CONFIRMATION PAGE — STYLES
+    ============================================================ */
+
+    /* ── Success hero banner ── */
+    .confirm-hero {
+      background:
+        linear-gradient(135deg, rgba(8,55,20,0.88) 0%, rgba(30,140,69,0.70) 100%),
+        linear-gradient(160deg, #081437 0%, #1a73e8 60%, #0e8a6e 100%);
+      padding: var(--sp-16) var(--sp-6) var(--sp-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .confirm-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    .confirm-hero__content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Animated checkmark circle */
+    .confirm-hero__icon {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 3px solid rgba(255,255,255,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: auto;
+      margin-bottom: var(--sp-6);
+      font-size: 2.5rem;
+      color: var(--clr-white);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .confirm-hero__title {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-4xl);
+      font-weight: 700;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+      text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+    .confirm-hero__subtitle {
+      font-size: var(--fs-md);
+      color: rgba(255,255,255,0.82);
+      max-width: 480px;
+      margin-inline: auto;
+      margin-bottom: var(--sp-6);
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+
+    /* Booking ID pill */
+    .confirm-hero__ref {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-6);
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      color: var(--clr-white);
+      letter-spacing: 0.08em;
+      animation: fadeUp 0.5s 0.4s ease both;
+      cursor: default;
+    }
+    .confirm-hero__ref i { color: rgba(255,255,255,0.7); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* ── Progress steps (Step 2 active, Step 3 done) ── */
+    .booking-steps {
+      background: var(--clr-white);
+      border-bottom: 1px solid var(--clr-border);
+      padding: var(--sp-5) var(--sp-6);
+    }
+    .booking-steps__inner {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step {
+      display: flex; align-items: center; gap: var(--sp-2);
+      font-size: var(--fs-sm); font-weight: 600;
+      color: var(--clr-text-faint);
+    }
+    .step.is-active { color: var(--clr-primary); }
+    .step.is-done   { color: var(--clr-success); }
+    .step__num {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--fs-sm); font-weight: 700;
+      background: var(--clr-white); flex-shrink: 0;
+      transition: all var(--ease-base);
+    }
+    .step.is-active .step__num { border-color: var(--clr-primary); background: var(--clr-primary); color: var(--clr-white); }
+    .step.is-done   .step__num { border-color: var(--clr-success); background: var(--clr-success); color: var(--clr-white); }
+    .step-connector { width: 80px; height: 2px; background: var(--clr-border); margin-inline: var(--sp-3); }
+    .step-connector.is-done { background: var(--clr-success); }
+
+    /* ── Main confirmation layout ── */
+    .confirm-layout {
+      max-width: 860px;
+      margin-inline: auto;
+      padding: var(--sp-10) var(--sp-6) var(--sp-16);
+    }
+
+    /* ── RECEIPT CARD (the printable area) ── */
+    #receiptCard {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      margin-bottom: var(--sp-8);
+    }
+
+    /* Receipt header bar */
+    .receipt__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-5) var(--sp-8);
+      background: var(--clr-primary);
+      color: var(--clr-white);
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+    }
+    .receipt__header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-family: var(--ff-heading);
+      font-size: var(--fs-xl);
+      font-weight: 700;
+      color: var(--clr-white);
+    }
+    .receipt__header-meta {
+      text-align: right;
+      font-size: var(--fs-xs);
+      opacity: 0.85;
+      line-height: 1.7;
+    }
+
+    /* Hotel image + basic info */
+    .receipt__hotel-banner {
+      display: flex;
+      gap: var(--sp-5);
+      align-items: center;
+      padding: var(--sp-6) var(--sp-8);
+      border-bottom: 1px solid var(--clr-border);
+      background: var(--clr-bg);
+    }
+    .receipt__hotel-img {
+      width: 110px;
+      height: 80px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid var(--clr-border);
+    }
+    .receipt__hotel-info {}
+    .receipt__hotel-name {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-xl);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+      margin-bottom: var(--sp-1);
+    }
+    .receipt__hotel-location {
+      font-size: var(--fs-sm);
+      color: var(--clr-primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      margin-bottom: var(--sp-2);
+    }
+    .receipt__hotel-category {
+      display: inline-block;
+      padding: 2px var(--sp-3);
+      border-radius: var(--radius-full);
+      background: var(--clr-primary-light);
+      color: var(--clr-primary);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+    }
+
+    /* Details grid — label: value rows */
+    .receipt__body {
+      padding: var(--sp-6) var(--sp-8);
+    }
+
+    .receipt__section-title {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--clr-text-muted);
+      margin-bottom: var(--sp-4);
+      padding-bottom: var(--sp-3);
+      border-bottom: 1px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .receipt__section-title i { color: var(--clr-primary); }
+
+    /* Two-column detail grid */
+    .receipt__details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4) var(--sp-8);
+      margin-bottom: var(--sp-6);
+    }
+
+    .detail-item {}
+    .detail-item__label {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--clr-text-muted);
+      margin-bottom: var(--sp-1);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+    .detail-item__label i { color: var(--clr-primary); font-size: 0.7rem; width: 12px; }
+    .detail-item__value {
+      font-size: var(--fs-base);
+      font-weight: 600;
+      color: var(--clr-text-heading);
+    }
+
+    /* Nights pill */
+    .nights-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-1) var(--sp-3);
+      background: var(--clr-primary-light);
+      color: var(--clr-primary);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-sm);
+      font-weight: 700;
+    }
+
+    /* Divider */
+    .receipt__divider {
+      border: none;
+      border-top: 1px dashed var(--clr-border);
+      margin: var(--sp-5) 0;
+    }
+
+    /* Price breakdown table */
+    .receipt__price-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--sp-4);
+    }
+    .receipt__price-table td {
+      padding: var(--sp-3) var(--sp-4);
+      font-size: var(--fs-sm);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .receipt__price-table td:last-child { text-align: right; font-weight: 600; }
+    .receipt__price-table tr:last-child td { border-bottom: none; }
+    .receipt__price-label { color: var(--clr-text-muted); }
+
+    /* Total price row */
+    .receipt__total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-5) var(--sp-4);
+      background: var(--clr-primary-light);
+      border-radius: var(--radius-lg);
+      border: 2px solid rgba(26,115,232,0.2);
+      margin-top: var(--sp-2);
+    }
+    .receipt__total-label {
+      font-size: var(--fs-base);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+    }
+    .receipt__total-label span {
+      display: block;
+      font-size: var(--fs-xs);
+      font-weight: 400;
+      color: var(--clr-text-muted);
+    }
+    .receipt__total-price {
+      font-size: var(--fs-3xl);
+      font-weight: 800;
+      color: var(--clr-primary);
+    }
+
+    /* Barcode-style footer decoration */
+    .receipt__footer {
+      padding: var(--sp-5) var(--sp-8);
+      background: var(--clr-bg);
+      border-top: 1px dashed var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+    }
+    .receipt__footer-note {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-muted);
+      line-height: 1.7;
+    }
+    .receipt__stamp {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border: 2px solid var(--clr-success);
+      border-radius: var(--radius-md);
+      color: var(--clr-success);
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── ACTION BUTTONS row ── */
+    .confirm-actions {
+      display: flex;
+      gap: var(--sp-4);
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-10);
+    }
+
+    /* ── MY BOOKINGS TABLE ── */
+    .bookings-history {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .bookings-history__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-5) var(--sp-6);
+      border-bottom: 1px solid var(--clr-border);
+      background: var(--clr-bg);
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+    .bookings-history__title {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .bookings-history__title i { color: var(--clr-primary); }
+    .bookings-history__clear {
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      color: var(--clr-danger);
+      background: none;
+      border: 1px solid var(--clr-danger);
+      padding: var(--sp-1) var(--sp-3);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--ease-fast);
+    }
+    .bookings-history__clear:hover {
+      background: var(--clr-danger);
+      color: var(--clr-white);
+    }
+
+    /* Table */
+    .bookings-table-wrap {
+      overflow-x: auto;
+    }
+    .bookings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--fs-sm);
+    }
+    .bookings-table th {
+      padding: var(--sp-3) var(--sp-4);
+      text-align: left;
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--clr-text-muted);
+      background: var(--clr-bg);
+      border-bottom: 1px solid var(--clr-border);
+      white-space: nowrap;
+    }
+    .bookings-table td {
+      padding: var(--sp-4);
+      border-bottom: 1px solid var(--clr-border);
+      color: var(--clr-text-body);
+      vertical-align: middle;
+    }
+    .bookings-table tr:last-child td { border-bottom: none; }
+    .bookings-table tr:hover td { background: var(--clr-bg); }
+    .bookings-table .booking-id-cell {
+      font-family: monospace;
+      font-size: var(--fs-xs);
+      color: var(--clr-primary);
+      font-weight: 700;
+    }
+    .bookings-table .price-cell {
+      font-weight: 700;
+      color: var(--clr-text-heading);
+    }
+
+    /* Empty history state */
+    .history-empty {
+      text-align: center;
+      padding: var(--sp-10);
+      color: var(--clr-text-muted);
+    }
+    .history-empty i {
+      font-size: 2.5rem;
+      color: var(--clr-border);
+      margin-bottom: var(--sp-4);
+    }
+
+    /* ── No booking found state ── */
+    .no-booking {
+      text-align: center;
+      padding: var(--sp-20) var(--sp-6);
+      max-width: 480px;
+      margin-inline: auto;
+    }
+    .no-booking i {
+      font-size: 4rem;
+      color: var(--clr-border);
+      margin-bottom: var(--sp-6);
+    }
+    .no-booking h2 {
+      font-size: var(--fs-2xl);
+      margin-bottom: var(--sp-4);
+    }
+    .no-booking p {
+      color: var(--clr-text-muted);
+      margin-bottom: var(--sp-8);
+    }
+
+    /* ================================================================
+       PRINT STYLES
+       ----------------------------------------------------------------
+       @media print fires only when the browser's print dialog is open.
+       We hide everything that makes no sense on paper:
+       navbar, footer, scroll-to-top, action buttons.
+       We show only the receipt card.
+    ================================================================ */
+    @media print {
+      /* Hide navigation and interactive elements */
+      header,
+      .booking-steps,
+      .confirm-hero,
+      .confirm-actions,
+      .bookings-history,
+      .footer,
+      .scroll-top,
+      .toast,
+      #printBtn,
+      #homeBtn,
+      #historyBtn       { display: none !important; }
+
+      /* Reset body for paper */
+      body {
+        background: white;
+        color: black;
+        font-size: 12pt;
+      }
+
+      /* Make the receipt card fill the whole page */
+      .confirm-layout {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      #receiptCard {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        border-radius: 0;
+        margin: 0;
+        page-break-inside: avoid;
+      }
+
+      /* Print header: show brand prominently */
+      .receipt__header {
+        background: #1a73e8 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Total row: keep the blue highlight */
+      .receipt__total-row {
+        background: #e8f1fd !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Ensure links print with full URL */
+      a::after { content: none; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .confirm-hero__title    { font-size: var(--fs-3xl); }
+      .receipt__hotel-banner  { flex-direction: column; align-items: flex-start; }
+      .receipt__details-grid  { grid-template-columns: 1fr; }
+      .receipt__header        { flex-direction: column; text-align: left; }
+      .receipt__header-meta   { text-align: left; }
+      .receipt__body          { padding: var(--sp-5); }
+      .receipt__hotel-banner  { padding: var(--sp-5); }
+      .receipt__footer        { flex-direction: column; }
+      .confirm-actions        { flex-direction: column; align-items: stretch; }
+      .step-connector         { width: 40px; }
+      .step__label            { display: none; }
+    }
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <a href="index.html" class="navbar__logo" aria-label="TravelEase home">
+        <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+        <span>TravelEase</span>
+      </a>
+      <ul class="navbar__links" id="navLinks" role="list">
+        <li><a href="index.html"              class="navbar__link">Home</a></li>
+        <li><a href="index.html#destinations" class="navbar__link">Destinations</a></li>
+        <li><a href="hotels.html"             class="navbar__link">Hotels</a></li>
+        <li><a href="booking.html"            class="navbar__link">Bookings</a></li>
+        <li><a href="bookings.html"           class="navbar__link">My Bookings</a></li>
+        <li>
+          <a href="wishlist.html" class="navbar__link">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+            Wishlist
+            <span class="wishlist-badge" id="wishlistBadge" style="display:none;" aria-label="wishlist count">0</span>
+          </a>
+        </li>
+        <li><a href="index.html#contact"      class="navbar__link">Contact</a></li>
+      </ul>
+      <button
+        class="navbar__hamburger" id="hamburgerBtn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false" aria-controls="navLinks"
+      >
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+
+      <!-- Dark / Light mode toggle -->
+      <button class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <span class="theme-toggle__icon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span>
+      </button>
+
+    </nav>
+  </header>
+
+
+  <main id="mainContent">
+
+    <!--
+      The entire main content is injected by confirmation.js.
+      It reads LocalStorage, and renders either:
+        A) The full confirmation receipt (booking found)
+        B) A "no booking found" message (nothing in LocalStorage)
+    -->
+
+  </main>
+
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer" id="contact" role="contentinfo">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <a href="index.html" class="navbar__logo footer__logo">
+          <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+          <span>TravelEase</span>
+        </a>
+        <p class="footer__tagline">Your journey begins with a single search.</p>
+        <div class="footer__socials" aria-label="Social media links">
+          <a href="#" class="footer__social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="footer__social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <nav class="footer__nav" aria-label="Quick links">
+        <h3 class="footer__nav-title">Quick Links</h3>
+        <ul class="footer__nav-list">
+          <li><a href="index.html"   class="footer__nav-link">Home</a></li>
+          <li><a href="hotels.html"  class="footer__nav-link">Hotels</a></li>
+          <li><a href="booking.html" class="footer__nav-link">Book Now</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__nav" aria-label="Support links">
+        <h3 class="footer__nav-title">Support</h3>
+        <ul class="footer__nav-list">
+          <li><a href="#" class="footer__nav-link">FAQs</a></li>
+          <li><a href="#" class="footer__nav-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__nav-link">Terms of Service</a></li>
+        </ul>
+      </nav>
+      <address class="footer__contact" aria-label="Contact information">
+        <h3 class="footer__nav-title">Contact Us</h3>
+        <ul class="footer__contact-list">
+          <li><i class="fa-solid fa-envelope"></i><a href="mailto:hello@travelease.com" class="footer__nav-link">hello@travelease.com</a></li>
+          <li><i class="fa-solid fa-phone"></i><a href="tel:+911800123456" class="footer__nav-link">+91 1800-123-456</a></li>
+          <li><i class="fa-solid fa-location-dot"></i><span>Bengaluru, Karnataka</span></li>
+        </ul>
+      </address>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; <span id="currentYear"></span> TravelEase. All rights reserved.</p>
+      <p>Made with <i class="fa-solid fa-heart" style="color:#e74c3c;"></i> for travellers.</p>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- data.js for formatPrice() and generateStarHTML() -->
+  <script src="js/data.js"></script>
+  <script src="js/confirmation.js"></script>
+  <script src="js/features.js"></script>
+
+</body>
+</html>

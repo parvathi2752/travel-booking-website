@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Book your perfect hotel stay with TravelEase." />
+  <title>Book Now – TravelEase</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eqjn8fE/qSAkYdn7+RZg7gSvUQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    /* ============================================================
+       BOOKING PAGE — PAGE-SPECIFIC STYLES
+    ============================================================ */
+
+    /* ── Page hero banner ── */
+    .page-hero {
+      background:
+        linear-gradient(135deg, rgba(8,20,55,0.82) 0%, rgba(26,115,232,0.60) 100%),
+        linear-gradient(160deg, #081437 0%, #1a4fa8 60%, #0e8a6e 100%);
+      padding: var(--sp-16) var(--sp-6) var(--sp-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    .page-hero__content { position: relative; z-index: 1; }
+    .page-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-5);
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: var(--sp-5);
+    }
+    .page-hero__title {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-4xl);
+      font-weight: 700;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+      text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .page-hero__subtitle {
+      font-size: var(--fs-md);
+      color: rgba(255,255,255,0.80);
+      max-width: 480px;
+      margin-inline: auto;
+    }
+
+    /* ── Progress steps bar ── */
+    .booking-steps {
+      background: var(--clr-white);
+      border-bottom: 1px solid var(--clr-border);
+      padding: var(--sp-5) var(--sp-6);
+    }
+    .booking-steps__inner {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      color: var(--clr-text-faint);
+      position: relative;
+    }
+    .step.is-active  { color: var(--clr-primary); }
+    .step.is-done    { color: var(--clr-success); }
+    .step__num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      background: var(--clr-white);
+      flex-shrink: 0;
+      transition: all var(--ease-base);
+    }
+    .step.is-active .step__num {
+      border-color: var(--clr-primary);
+      background: var(--clr-primary);
+      color: var(--clr-white);
+    }
+    .step.is-done .step__num {
+      border-color: var(--clr-success);
+      background: var(--clr-success);
+      color: var(--clr-white);
+    }
+    /* Connector line between steps */
+    .step-connector {
+      width: 80px;
+      height: 2px;
+      background: var(--clr-border);
+      margin-inline: var(--sp-3);
+    }
+    .step-connector.is-done { background: var(--clr-success); }
+
+    /* ── Main booking layout ── */
+    .booking-layout {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      padding: var(--sp-10) var(--sp-6);
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: var(--sp-8);
+      align-items: start;
+    }
+
+    /* ── FORM CARD ── */
+    .booking-form-card {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .booking-form-card__header {
+      padding: var(--sp-6) var(--sp-8);
+      border-bottom: 1px solid var(--clr-border);
+      background: var(--clr-bg);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+    .booking-form-card__header-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--clr-primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--clr-primary);
+      font-size: var(--fs-lg);
+      flex-shrink: 0;
+    }
+    .booking-form-card__header h2 {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-xl);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+      margin-bottom: 2px;
+    }
+    .booking-form-card__header p {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-muted);
+    }
+
+    /* ── THE BOOKING FORM ── */
+    .booking-form {
+      padding: var(--sp-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-6);
+    }
+
+    /* Section divider inside the form */
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .form-section__title {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--clr-text-muted);
+      padding-bottom: var(--sp-3);
+      border-bottom: 1px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .form-section__title i { color: var(--clr-primary); }
+
+    /* Two fields side by side */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-5);
+    }
+
+    /* ── FORM GROUP (label + input + error) ── */
+    /*
+      Each field is wrapped in a .form-group.
+      Structure:
+        .form-group
+          label.form-label
+          .input-wrap
+            input.form-input  (or select)
+          p.form-error        ← hidden by default
+    */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .form-label {
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      color: var(--clr-text-body);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .form-label i    { color: var(--clr-primary); font-size: 0.8rem; }
+    .form-label .required {
+      color: var(--clr-danger);
+      font-size: var(--fs-base);
+      line-height: 1;
+    }
+
+    /* Input wrapper — holds the input + optional icon */
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap i {
+      position: absolute;
+      left: var(--sp-4);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--clr-text-faint);
+      font-size: var(--fs-sm);
+      pointer-events: none;   /* icon doesn't block input clicks */
+      transition: color var(--ease-fast);
+    }
+
+    /* The actual input / select element */
+    .form-input {
+      width: 100%;
+      padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-10);
+      border: 2px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      font-size: var(--fs-base);
+      font-weight: 500;
+      color: var(--clr-text-heading);
+      background: var(--clr-white);
+      outline: none;
+      transition:
+        border-color var(--ease-base),
+        box-shadow   var(--ease-base),
+        background   var(--ease-fast);
+      appearance: none;   /* remove default select arrow on some browsers */
+    }
+    .form-input::placeholder { color: var(--clr-text-faint); font-weight: 400; }
+
+    /* Focus state — blue ring */
+    .form-input:focus {
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 4px var(--clr-primary-light);
+    }
+    .form-input:focus + i,
+    .input-wrap:focus-within i { color: var(--clr-primary); }
+
+    /* Valid state — green border */
+    .form-input.is-valid {
+      border-color: var(--clr-success);
+      background: #f0faf4;
+    }
+    /* Invalid state — red border */
+    .form-input.is-invalid {
+      border-color: var(--clr-danger);
+      background: #fff5f5;
+    }
+
+    /* Checkmark / cross icons inside the input (right side) */
+    .input-status {
+      position: absolute;
+      right: var(--sp-4);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: var(--fs-sm);
+      pointer-events: none;
+      display: none;
+    }
+    .form-input.is-valid  ~ .input-status { display: block; color: var(--clr-success); }
+    .form-input.is-invalid ~ .input-status { display: block; color: var(--clr-danger);  }
+
+    /* Error message below the input */
+    .form-error {
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      color: var(--clr-danger);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      min-height: 1.2em;  /* prevents layout shift when message appears/disappears */
+      /* Hidden by default */
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity var(--ease-base), transform var(--ease-base);
+      pointer-events: none;
+    }
+    /* JS adds this class to show the error */
+    .form-error.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Hint text (not an error — just info) */
+    .form-hint {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+
+    /* Select dropdown arrow (custom) */
+    select.form-input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right var(--sp-4) center;
+      padding-right: var(--sp-10);
+      cursor: pointer;
+    }
+
+    /* ── SUBMIT BUTTON ── */
+    .booking-submit-btn {
+      width: 100%;
+      padding: var(--sp-5);
+      background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-primary-dark) 100%);
+      color: var(--clr-white);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: var(--fs-md);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-3);
+      transition: filter var(--ease-base), transform var(--ease-fast), box-shadow var(--ease-base);
+      box-shadow: var(--shadow-md);
+      letter-spacing: 0.02em;
+    }
+    .booking-submit-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .booking-submit-btn:active { transform: translateY(0); }
+    .booking-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── BOOKING SUMMARY SIDEBAR ── */
+    .booking-summary {
+      position: sticky;
+      top: calc(var(--navbar-height) + var(--sp-6));
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .booking-summary__header {
+      padding: var(--sp-5) var(--sp-6);
+      background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-primary-dark) 100%);
+      color: var(--clr-white);
+    }
+    .booking-summary__header h3 {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-1);
+    }
+    .booking-summary__header p {
+      font-size: var(--fs-sm);
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* Hotel preview inside summary */
+    .summary-hotel {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: flex-start;
+      padding: var(--sp-5) var(--sp-6);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .summary-hotel__img {
+      width: 72px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .summary-hotel__name {
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+      line-height: 1.4;
+      margin-bottom: var(--sp-1);
+    }
+    .summary-hotel__location {
+      font-size: var(--fs-xs);
+      color: var(--clr-primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Price breakdown rows */
+    .summary-body {
+      padding: var(--sp-5) var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--fs-sm);
+      color: var(--clr-text-muted);
+    }
+    .summary-row__label {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .summary-row__label i { color: var(--clr-primary); font-size: 0.75rem; width: 14px; }
+    .summary-row__value   { font-weight: 600; color: var(--clr-text-body); }
+
+    .summary-divider {
+      border: none;
+      border-top: 1px dashed var(--clr-border);
+      margin: var(--sp-2) 0;
+    }
+
+    /* Total price row */
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-4) var(--sp-6);
+      background: var(--clr-primary-light);
+      border-top: 2px solid var(--clr-primary);
+    }
+    .summary-total__label {
+      font-size: var(--fs-base);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+    }
+    .summary-total__label span {
+      display: block;
+      font-size: var(--fs-xs);
+      font-weight: 400;
+      color: var(--clr-text-muted);
+    }
+    .summary-total__price {
+      font-size: var(--fs-2xl);
+      font-weight: 800;
+      color: var(--clr-primary);
+    }
+
+    /* Trust badges below summary */
+    .summary-trust {
+      padding: var(--sp-4) var(--sp-6);
+      border-top: 1px solid var(--clr-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-size: var(--fs-xs);
+      color: var(--clr-text-muted);
+    }
+    .trust-item i { color: var(--clr-success); font-size: 0.85rem; }
+
+    /* "No hotel selected" placeholder */
+    .summary-placeholder {
+      padding: var(--sp-8) var(--sp-6);
+      text-align: center;
+      color: var(--clr-text-muted);
+    }
+    .summary-placeholder i {
+      font-size: 2.5rem;
+      color: var(--clr-border);
+      margin-bottom: var(--sp-4);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .booking-layout {
+        grid-template-columns: 1fr 320px;
+        gap: var(--sp-6);
+      }
+    }
+    @media (max-width: 768px) {
+      .booking-layout {
+        grid-template-columns: 1fr;
+        padding: var(--sp-6) var(--sp-4);
+      }
+      .booking-summary {
+        position: static;
+        order: -1;  /* summary appears ABOVE form on mobile */
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .booking-form {
+        padding: var(--sp-5);
+      }
+      .step-connector { width: 40px; }
+      .step__label    { display: none; }  /* hide text labels on small screens */
+      .page-hero__title { font-size: var(--fs-3xl); }
+    }
+    @media (max-width: 480px) {
+      .booking-steps { padding: var(--sp-4); }
+      .step-connector { width: 24px; }
+    }
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <a href="index.html" class="navbar__logo" aria-label="TravelEase home">
+        <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+        <span>TravelEase</span>
+      </a>
+      <ul class="navbar__links" id="navLinks" role="list">
+        <li><a href="index.html"             class="navbar__link">Home</a></li>
+        <li><a href="index.html#destinations" class="navbar__link">Destinations</a></li>
+        <li><a href="hotels.html"            class="navbar__link">Hotels</a></li>
+        <li><a href="booking.html"            class="navbar__link active" aria-current="page">Book Now</a></li>
+        <li><a href="bookings.html"          class="navbar__link">My Bookings</a></li>
+        <li>
+          <a href="wishlist.html" class="navbar__link">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+            Wishlist
+            <span class="wishlist-badge" id="wishlistBadge" style="display:none;" aria-label="wishlist count">0</span>
+          </a>
+        </li>
+        <li><a href="index.html#contact"     class="navbar__link">Contact</a></li>
+      </ul>
+      <button
+        class="navbar__hamburger" id="hamburgerBtn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false" aria-controls="navLinks"
+      >
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+
+      <!-- Dark / Light mode toggle -->
+      <button class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <span class="theme-toggle__icon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span>
+      </button>
+
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- ── PAGE HERO ── -->
+    <section class="page-hero" aria-label="Booking page header">
+      <div class="page-hero__content">
+        <p class="page-hero__eyebrow">
+          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+          Secure Your Stay
+        </p>
+        <h1 class="page-hero__title">Complete Your Booking</h1>
+        <p class="page-hero__subtitle">
+          Fill in your details below and confirm your reservation in seconds.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── PROGRESS STEPS ── -->
+    <!--
+      Shows the user where they are in the booking journey.
+      Step 1 (Your Details) is active now.
+      Step 2 (Confirmation) will be active on confirmation.html.
+    -->
+    <div class="booking-steps" aria-label="Booking progress">
+      <div class="booking-steps__inner">
+        <!-- Step 1 -->
+        <div class="step is-active" aria-current="step">
+          <span class="step__num" aria-hidden="true">1</span>
+          <span class="step__label">Your Details</span>
+        </div>
+        <div class="step-connector" aria-hidden="true"></div>
+        <!-- Step 2 -->
+        <div class="step" aria-label="Step 2: Confirmation (upcoming)">
+          <span class="step__num" aria-hidden="true">2</span>
+          <span class="step__label">Confirmation</span>
+        </div>
+        <div class="step-connector" aria-hidden="true"></div>
+        <!-- Step 3 -->
+        <div class="step" aria-label="Step 3: Done (upcoming)">
+          <span class="step__num" aria-hidden="true">3</span>
+          <span class="step__label">Done!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MAIN LAYOUT ── -->
+    <div class="booking-layout">
+
+      <!-- ══════════════════════════════════════════
+           LEFT: BOOKING FORM CARD
+      ══════════════════════════════════════════ -->
+      <div class="booking-form-card" role="main">
+
+        <div class="booking-form-card__header">
+          <div class="booking-form-card__header-icon" aria-hidden="true">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h2>Traveller Details</h2>
+            <p>All fields marked <span style="color:var(--clr-danger)">*</span> are required.</p>
+          </div>
+        </div>
+
+        <!--
+          novalidate → we handle all validation ourselves in JS.
+          Without it, the browser shows its own ugly popups.
+          action="#"  → prevents page reload on submit.
+        -->
+        <form
+          class="booking-form"
+          id="bookingForm"
+          action="#"
+          novalidate
+          aria-label="Hotel booking form"
+        >
+
+          <!-- ── SECTION 1: PERSONAL INFORMATION ── -->
+          <fieldset class="form-section" aria-label="Personal information">
+            <legend class="form-section__title">
+              <i class="fa-solid fa-user" aria-hidden="true"></i>
+              Personal Information
+            </legend>
+
+            <!-- Full Name -->
+            <div class="form-group" id="group-fullName">
+              <label class="form-label" for="fullName">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                Full Name
+                <span class="required" aria-label="required">*</span>
+              </label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  class="form-input"
+                  placeholder="e.g. Rahul Sharma"
+                  autocomplete="name"
+                  aria-required="true"
+                  aria-describedby="fullName-error"
+                />
+                <!-- Status icon: green tick or red cross, shown by JS -->
+                <span class="input-status" aria-hidden="true"></span>
+              </div>
+              <p class="form-error" id="fullName-error" role="alert" aria-live="polite">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <span></span>
+              </p>
+            </div>
+
+            <!-- Email + Phone (side by side) -->
+            <div class="form-row">
+
+              <!-- Email -->
+              <div class="form-group" id="group-email">
+                <label class="form-label" for="email">
+                  <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                  Email Address
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    aria-required="true"
+                    aria-describedby="email-error"
+                  />
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="email-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+              <!-- Phone -->
+              <div class="form-group" id="group-phone">
+                <label class="form-label" for="phone">
+                  <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                  Phone Number
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    class="form-input"
+                    placeholder="+91 98765 43210"
+                    autocomplete="tel"
+                    aria-required="true"
+                    aria-describedby="phone-error"
+                  />
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="phone-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+            </div>
+          </fieldset>
+
+          <!-- ── SECTION 2: TRAVEL DETAILS ── -->
+          <fieldset class="form-section" aria-label="Travel details">
+            <legend class="form-section__title">
+              <i class="fa-solid fa-plane" aria-hidden="true"></i>
+              Travel Details
+            </legend>
+
+            <!-- Destination + Hotel (side by side) -->
+            <div class="form-row">
+
+              <!-- Destination -->
+              <div class="form-group" id="group-destination">
+                <label class="form-label" for="destinationSelect">
+                  <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                  Destination
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                  <!--
+                    Options are injected dynamically by booking.js
+                    from destinations[] in data.js.
+                  -->
+                  <select
+                    id="destinationSelect"
+                    name="destination"
+                    class="form-input"
+                    aria-required="true"
+                    aria-describedby="destination-error"
+                  >
+                    <option value="">Select a destination</option>
+                    <!-- JS will inject options here -->
+                  </select>
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="destination-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+              <!-- Hotel -->
+              <div class="form-group" id="group-hotel">
+                <label class="form-label" for="hotelSelect">
+                  <i class="fa-solid fa-hotel" aria-hidden="true"></i>
+                  Hotel
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-hotel" aria-hidden="true"></i>
+                  <select
+                    id="hotelSelect"
+                    name="hotel"
+                    class="form-input"
+                    aria-required="true"
+                    aria-describedby="hotel-error"
+                  >
+                    <option value="">Select destination first</option>
+                    <!-- JS populates based on selected destination -->
+                  </select>
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="hotel-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+            </div>
+
+            <!-- Check-in + Check-out (side by side) -->
+            <div class="form-row">
+
+              <!-- Check-in Date -->
+              <div class="form-group" id="group-checkin">
+                <label class="form-label" for="checkinDate">
+                  <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                  Check-in Date
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                  <input
+                    type="date"
+                    id="checkinDate"
+                    name="checkin"
+                    class="form-input"
+                    aria-required="true"
+                    aria-describedby="checkin-error"
+                  />
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="checkin-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+              <!-- Check-out Date -->
+              <div class="form-group" id="group-checkout">
+                <label class="form-label" for="checkoutDate">
+                  <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+                  Check-out Date
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+                  <input
+                    type="date"
+                    id="checkoutDate"
+                    name="checkout"
+                    class="form-input"
+                    aria-required="true"
+                    aria-describedby="checkout-error"
+                  />
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="checkout-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+            </div>
+
+            <!--
+              NIGHTS DISPLAY BADGE
+              ──────────────────────────────────────────────
+              This panel appears automatically once BOTH dates
+              are picked. JS writes the nights count into it.
+              Hidden by default (opacity:0), revealed by JS.
+            -->
+            <div
+              id="nightsBadge"
+              role="status"
+              aria-live="polite"
+              style="
+                display: flex;
+                align-items: center;
+                gap: var(--sp-4);
+                padding: var(--sp-4) var(--sp-5);
+                background: var(--clr-primary-light);
+                border: 1.5px solid rgba(26,115,232,0.25);
+                border-radius: var(--radius-lg);
+                opacity: 0;
+                transform: translateY(-6px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                pointer-events: none;
+              "
+            >
+              <!-- Moon icon -->
+              <div style="
+                width: 44px; height: 44px; border-radius: 50%;
+                background: var(--clr-primary); color: white;
+                display: flex; align-items: center; justify-content: center;
+                font-size: var(--fs-lg); flex-shrink: 0;
+              ">
+                <i class="fa-solid fa-moon" aria-hidden="true"></i>
+              </div>
+
+              <!-- Nights count — filled by JS -->
+              <div>
+                <p id="nightsCount" style="
+                  font-size: var(--fs-2xl);
+                  font-weight: 800;
+                  color: var(--clr-primary);
+                  line-height: 1;
+                  margin-bottom: 2px;
+                ">0 Nights</p>
+                <p id="nightsDateRange" style="
+                  font-size: var(--fs-xs);
+                  color: var(--clr-text-muted);
+                  font-weight: 500;
+                ">—</p>
+              </div>
+
+              <!-- Per-night price pill — filled by JS when hotel is chosen -->
+              <div style="margin-left: auto; text-align: right;">
+                <p id="nightsPriceNote" style="
+                  font-size: var(--fs-xs);
+                  color: var(--clr-text-muted);
+                  white-space: nowrap;
+                "></p>
+              </div>
+            </div>
+
+            <!-- Invalid-dates error banner (shown by JS) -->
+            <div
+              id="datesErrorBanner"
+              role="alert"
+              style="
+                display: none;
+                align-items: center;
+                gap: var(--sp-3);
+                padding: var(--sp-3) var(--sp-5);
+                background: #fff5f5;
+                border: 1.5px solid var(--clr-danger);
+                border-radius: var(--radius-md);
+                font-size: var(--fs-sm);
+                font-weight: 600;
+                color: var(--clr-danger);
+              "
+            >
+              <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+              <span id="datesErrorText"></span>
+            </div>
+
+            <!-- Guests + Rooms (side by side) -->
+            <div class="form-row">
+
+              <!-- Number of Guests -->
+              <div class="form-group" id="group-guests">
+                <label class="form-label" for="guestsInput">
+                  <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                  Number of Guests
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                  <input
+                    type="number"
+                    id="guestsInput"
+                    name="guests"
+                    class="form-input"
+                    value="2"
+                    min="1"
+                    max="20"
+                    aria-required="true"
+                    aria-describedby="guests-error"
+                  />
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="guests-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+              <!-- Number of Rooms -->
+              <div class="form-group" id="group-rooms">
+                <label class="form-label" for="roomsInput">
+                  <i class="fa-solid fa-door-open" aria-hidden="true"></i>
+                  Number of Rooms
+                  <span class="required" aria-label="required">*</span>
+                </label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-door-open" aria-hidden="true"></i>
+                  <input
+                    type="number"
+                    id="roomsInput"
+                    name="rooms"
+                    class="form-input"
+                    value="1"
+                    min="1"
+                    max="10"
+                    aria-required="true"
+                    aria-describedby="rooms-error"
+                  />
+                  <span class="input-status" aria-hidden="true"></span>
+                </div>
+                <p class="form-error" id="rooms-error" role="alert" aria-live="polite">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+                <!-- Hint: shows how many rooms are available for the chosen hotel -->
+                <p class="form-hint" id="rooms-hint" aria-live="polite">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span></span>
+                </p>
+              </div>
+
+            </div>
+
+          </fieldset>
+
+          <!-- ── SECTION 3: SPECIAL REQUESTS ── -->
+          <fieldset class="form-section" aria-label="Special requests">
+            <legend class="form-section__title">
+              <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+              Special Requests
+              <span style="font-size:var(--fs-xs);font-weight:400;text-transform:none;
+                           letter-spacing:0;color:var(--clr-text-faint);margin-left:var(--sp-2);">
+                (optional)
+              </span>
+            </legend>
+
+            <div class="form-group">
+              <label class="form-label" for="specialRequests">
+                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                Anything we should know?
+              </label>
+              <textarea
+                id="specialRequests"
+                name="specialRequests"
+                class="form-input"
+                rows="3"
+                placeholder="e.g. Early check-in, ground floor room, vegetarian meals..."
+                style="resize:vertical; padding-top:var(--sp-3); min-height:80px;"
+              ></textarea>
+              <p class="form-hint">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                Subject to availability. We'll do our best to accommodate.
+              </p>
+            </div>
+          </fieldset>
+
+          <!-- ── FORM LEVEL ERROR (shown if multiple fields fail) ── -->
+          <div
+            class="form-error"
+            id="form-level-error"
+            role="alert"
+            aria-live="assertive"
+            style="font-size:var(--fs-sm); padding:var(--sp-3) var(--sp-4);
+                   background:#fff5f5; border-radius:var(--radius-md);
+                   border: 1px solid var(--clr-danger);"
+          >
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            <span>Please fix the errors above before continuing.</span>
+          </div>
+
+          <!-- ── SUBMIT BUTTON ── -->
+          <button
+            type="submit"
+            class="booking-submit-btn"
+            id="submitBtn"
+            aria-label="Confirm booking"
+          >
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            Confirm Booking
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+
+          <!-- Small reassurance text below the button -->
+          <p style="text-align:center; font-size:var(--fs-xs); color:var(--clr-text-muted);">
+            <i class="fa-solid fa-shield-halved" style="color:var(--clr-success);"></i>
+            Your personal details are safe and never shared.
+            Free cancellation on most bookings.
+          </p>
+
+        </form>
+      </div>
+      <!-- END BOOKING FORM CARD -->
+
+
+      <!-- ══════════════════════════════════════════
+           RIGHT: BOOKING SUMMARY SIDEBAR
+      ══════════════════════════════════════════ -->
+      <aside class="booking-summary" id="bookingSummary" aria-label="Booking summary">
+
+        <div class="booking-summary__header">
+          <h3>Booking Summary</h3>
+          <p>Updates automatically as you fill the form</p>
+        </div>
+
+        <!--
+          This entire section is replaced by JS when a hotel is selected.
+          Initially shows a placeholder message.
+        -->
+        <div id="summaryContent">
+          <div class="summary-placeholder">
+            <i class="fa-solid fa-hotel" aria-hidden="true"></i>
+            <p style="font-size:var(--fs-sm); font-weight:600; color:var(--clr-text-body); margin-bottom:var(--sp-2);">
+              No hotel selected yet
+            </p>
+            <p style="font-size:var(--fs-xs);">
+              Choose a destination and hotel to see your price breakdown.
+            </p>
+          </div>
+        </div>
+
+      </aside>
+      <!-- END SUMMARY SIDEBAR -->
+
+    </div>
+    <!-- END BOOKING LAYOUT -->
+
+  </main>
+
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer" id="contact" role="contentinfo">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <a href="index.html" class="navbar__logo footer__logo">
+          <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+          <span>TravelEase</span>
+        </a>
+        <p class="footer__tagline">Your journey begins with a single search.</p>
+        <div class="footer__socials" aria-label="Social media links">
+          <a href="#" class="footer__social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="footer__social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <nav class="footer__nav" aria-label="Quick links">
+        <h3 class="footer__nav-title">Quick Links</h3>
+        <ul class="footer__nav-list">
+          <li><a href="index.html"  class="footer__nav-link">Home</a></li>
+          <li><a href="hotels.html" class="footer__nav-link">Hotels</a></li>
+          <li><a href="booking.html" class="footer__nav-link">Book Now</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__nav" aria-label="Support links">
+        <h3 class="footer__nav-title">Support</h3>
+        <ul class="footer__nav-list">
+          <li><a href="#" class="footer__nav-link">FAQs</a></li>
+          <li><a href="#" class="footer__nav-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__nav-link">Terms of Service</a></li>
+        </ul>
+      </nav>
+      <address class="footer__contact" aria-label="Contact information">
+        <h3 class="footer__nav-title">Contact Us</h3>
+        <ul class="footer__contact-list">
+          <li><i class="fa-solid fa-envelope"></i><a href="mailto:hello@travelease.com" class="footer__nav-link">hello@travelease.com</a></li>
+          <li><i class="fa-solid fa-phone"></i><a href="tel:+911800123456" class="footer__nav-link">+91 1800-123-456</a></li>
+          <li><i class="fa-solid fa-location-dot"></i><span>Bengaluru, Karnataka</span></li>
+        </ul>
+      </address>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; <span id="currentYear"></span> TravelEase. All rights reserved.</p>
+      <p>Made with <i class="fa-solid fa-heart" style="color:#e74c3c;"></i> for travellers.</p>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- data.js must load first — booking.js reads from it -->
+  <script src="js/data.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/features.js"></script>
+
+</body>
+</html>

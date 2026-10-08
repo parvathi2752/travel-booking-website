@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="View and manage all your TravelEase hotel bookings." />
+  <title>My Bookings – TravelEase</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eqjn8fE/qSAkYdn7+RZg7gSvUQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    /* ============================================================
+       BOOKINGS PAGE — PAGE-SPECIFIC STYLES
+    ============================================================ */
+
+    /* ── Page hero ── */
+    .page-hero {
+      background:
+        linear-gradient(135deg, rgba(8,20,55,0.82) 0%, rgba(26,115,232,0.60) 100%),
+        linear-gradient(160deg, #081437 0%, #1a4fa8 60%, #0e8a6e 100%);
+      padding: var(--sp-16) var(--sp-6) var(--sp-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    .page-hero__content { position: relative; z-index: 1; }
+    .page-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-5);
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: var(--sp-5);
+    }
+    .page-hero__title {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-4xl);
+      font-weight: 700;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+      text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .page-hero__subtitle {
+      font-size: var(--fs-md);
+      color: rgba(255,255,255,0.80);
+      max-width: 480px;
+      margin-inline: auto;
+    }
+
+    /* ── TOOLBAR: stats + filter + clear ── */
+    .bookings-toolbar {
+      background: var(--clr-white);
+      border-bottom: 1px solid var(--clr-border);
+      padding: var(--sp-4) var(--sp-6);
+      position: sticky;
+      top: var(--navbar-height);
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .bookings-toolbar__inner {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+    }
+
+    /* Stats chips */
+    .booking-stats {
+      display: flex;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      border: 1.5px solid;
+    }
+    .stat-chip--all       { background: var(--clr-primary-light); color: var(--clr-primary);  border-color: rgba(26,115,232,0.25); }
+    .stat-chip--confirmed { background: #f0faf4; color: var(--clr-success); border-color: rgba(30,140,69,0.3); }
+    .stat-chip--cancelled { background: #fff5f5; color: var(--clr-danger);  border-color: rgba(217,48,37,0.3); }
+
+    /* Toolbar right side */
+    .bookings-toolbar__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: var(--sp-1);
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-full);
+      padding: 3px;
+    }
+    .filter-tab {
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--clr-text-muted);
+      cursor: pointer;
+      transition: all var(--ease-fast);
+      white-space: nowrap;
+    }
+    .filter-tab.is-active {
+      background: var(--clr-white);
+      color: var(--clr-primary);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* Clear history button */
+    .clear-history-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      border: 1.5px solid var(--clr-danger);
+      color: var(--clr-danger);
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--ease-base);
+      white-space: nowrap;
+    }
+    .clear-history-btn:hover {
+      background: var(--clr-danger);
+      color: var(--clr-white);
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .bookings-layout {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      padding: var(--sp-8) var(--sp-6) var(--sp-16);
+    }
+
+    /* ── BOOKING CARDS GRID ── */
+    .bookings-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+
+    /* Individual booking card */
+    .booking-card {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow var(--ease-base), transform var(--ease-base);
+      animation: cardIn 0.35s ease both;
+    }
+    .booking-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* Cancelled card styling */
+    .booking-card--cancelled {
+      opacity: 0.72;
+      border-color: rgba(217,48,37,0.25);
+    }
+    .booking-card--cancelled:hover {
+      transform: none;
+    }
+
+    /* Card inner layout: image | body | actions */
+    .booking-card__inner {
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      min-height: 180px;
+    }
+
+    /* Hotel thumbnail */
+    .booking-card__img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .booking-card__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--ease-slow);
+    }
+    .booking-card:hover:not(.booking-card--cancelled) .booking-card__img-wrap img {
+      transform: scale(1.05);
+    }
+
+    /* Status badge overlaid on the image */
+    .booking-card__status-badge {
+      position: absolute;
+      top: var(--sp-3);
+      left: var(--sp-3);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px var(--sp-3);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(6px);
+    }
+    .booking-card__status-badge--confirmed {
+      background: rgba(30,140,69,0.88);
+      color: white;
+    }
+    .booking-card__status-badge--cancelled {
+      background: rgba(217,48,37,0.88);
+      color: white;
+    }
+
+    /* Main body content */
+    .booking-card__body {
+      padding: var(--sp-5) var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      min-width: 0;
+    }
+
+    /* Top row: booking ID + hotel name */
+    .booking-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+    .booking-card__id {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      color: var(--clr-primary);
+      font-family: monospace;
+      letter-spacing: 0.05em;
+      background: var(--clr-primary-light);
+      padding: 2px var(--sp-2);
+      border-radius: var(--radius-xs);
+    }
+    .booking-card__hotel {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+      line-height: 1.3;
+    }
+    .booking-card__location {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      font-size: var(--fs-sm);
+      color: var(--clr-primary);
+      font-weight: 600;
+    }
+
+    /* Details row (dates, guests, rooms, nights) */
+    .booking-card__details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-4);
+    }
+    .booking-detail {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-size: var(--fs-sm);
+      color: var(--clr-text-muted);
+    }
+    .booking-detail i {
+      color: var(--clr-primary);
+      font-size: 0.75rem;
+      width: 14px;
+      flex-shrink: 0;
+    }
+    .booking-detail strong {
+      color: var(--clr-text-body);
+      font-weight: 600;
+    }
+
+    /* Cancellation notice */
+    .booking-card__cancel-notice {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      color: var(--clr-danger);
+      background: #fff5f5;
+      border: 1px solid rgba(217,48,37,0.25);
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Right column: price + action buttons */
+    .booking-card__side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: var(--sp-5) var(--sp-5);
+      border-left: 1px solid var(--clr-border);
+      gap: var(--sp-4);
+      min-width: 160px;
+      background: var(--clr-bg);
+    }
+    .booking-card__price {
+      text-align: right;
+    }
+    .booking-card__price-amount {
+      font-size: var(--fs-2xl);
+      font-weight: 800;
+      color: var(--clr-text-heading);
+      line-height: 1;
+    }
+    .booking-card__price-label {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-muted);
+      margin-top: 2px;
+    }
+
+    /* Action buttons inside the card */
+    .booking-card__btns {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      width: 100%;
+    }
+    .booking-card__btn {
+      width: 100%;
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: var(--radius-md);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      transition: all var(--ease-base);
+      border: 1.5px solid;
+      white-space: nowrap;
+    }
+    .booking-card__btn--view {
+      background: var(--clr-primary);
+      color: white;
+      border-color: var(--clr-primary);
+    }
+    .booking-card__btn--view:hover {
+      background: var(--clr-primary-dark);
+      border-color: var(--clr-primary-dark);
+    }
+    .booking-card__btn--cancel {
+      background: transparent;
+      color: var(--clr-danger);
+      border-color: var(--clr-danger);
+    }
+    .booking-card__btn--cancel:hover {
+      background: var(--clr-danger);
+      color: white;
+    }
+    .booking-card__btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ── EMPTY STATE ── */
+    .bookings-empty {
+      text-align: center;
+      padding: var(--sp-24) var(--sp-6);
+    }
+    .bookings-empty__icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--clr-bg);
+      border: 2px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: auto;
+      margin-bottom: var(--sp-6);
+      font-size: 2.5rem;
+      color: var(--clr-text-faint);
+    }
+    .bookings-empty h2 {
+      font-size: var(--fs-2xl);
+      color: var(--clr-text-heading);
+      margin-bottom: var(--sp-3);
+    }
+    .bookings-empty p {
+      color: var(--clr-text-muted);
+      max-width: 380px;
+      margin-inline: auto;
+      margin-bottom: var(--sp-8);
+    }
+
+    /* ── BOOKING DETAIL MODAL ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-4);
+      opacity: 0;
+      transition: opacity var(--ease-base);
+    }
+    .modal-backdrop.is-open { opacity: 1; }
+    .modal-box {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      max-width: 560px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(16px) scale(0.97);
+      transition: transform var(--ease-base);
+    }
+    .modal-backdrop.is-open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+    .modal-close {
+      position: absolute;
+      top: var(--sp-4);
+      right: var(--sp-4);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--clr-text-muted);
+      font-size: var(--fs-base);
+      transition: all var(--ease-fast);
+    }
+    .modal-close:hover { background: var(--clr-danger); color: white; border-color: var(--clr-danger); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .booking-card__inner {
+        grid-template-columns: 1fr;
+      }
+      .booking-card__img-wrap {
+        height: 180px;
+      }
+      .booking-card__side {
+        flex-direction: row;
+        border-left: none;
+        border-top: 1px solid var(--clr-border);
+        align-items: center;
+        min-width: unset;
+        padding: var(--sp-4) var(--sp-5);
+      }
+      .booking-card__btns {
+        flex-direction: row;
+        width: auto;
+      }
+      .bookings-toolbar__inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .page-hero__title { font-size: var(--fs-3xl); }
+    }
+
+    @media (max-width: 480px) {
+      .booking-card__details { gap: var(--sp-3); }
+      .filter-tabs           { flex-wrap: wrap; }
+    }
+
+    /* Print: hide non-content */
+    @media print {
+      .page-hero, .bookings-toolbar, .booking-card__btns,
+      header, .footer, .scroll-top { display: none !important; }
+      .booking-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    }
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <a href="index.html" class="navbar__logo" aria-label="TravelEase home">
+        <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+        <span>TravelEase</span>
+      </a>
+      <ul class="navbar__links" id="navLinks" role="list">
+        <li><a href="index.html"              class="navbar__link">Home</a></li>
+        <li><a href="index.html#destinations" class="navbar__link">Destinations</a></li>
+        <li><a href="hotels.html"             class="navbar__link">Hotels</a></li>
+        <li><a href="bookings.html"           class="navbar__link active" aria-current="page">My Bookings</a></li>
+        <li>
+          <a href="wishlist.html" class="navbar__link">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+            Wishlist
+            <span class="wishlist-badge" id="wishlistBadge" style="display:none;" aria-label="wishlist count">0</span>
+          </a>
+        </li>
+        <li><a href="index.html#contact"      class="navbar__link">Contact</a></li>
+      </ul>
+      <button
+        class="navbar__hamburger" id="hamburgerBtn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false" aria-controls="navLinks"
+      >
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+
+      <!-- Dark / Light mode toggle -->
+      <button class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <span class="theme-toggle__icon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span>
+      </button>
+
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- ── PAGE HERO ── -->
+    <section class="page-hero" aria-label="My bookings header">
+      <div class="page-hero__content">
+        <p class="page-hero__eyebrow">
+          <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+          Booking History
+        </p>
+        <h1 class="page-hero__title">My Bookings</h1>
+        <p class="page-hero__subtitle">
+          View, manage, and cancel your hotel reservations.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── STICKY TOOLBAR ── -->
+    <div class="bookings-toolbar" role="toolbar" aria-label="Bookings controls">
+      <div class="bookings-toolbar__inner">
+
+        <!-- Stats chips — filled by JS -->
+        <div class="booking-stats" id="bookingStats" aria-live="polite">
+          <!-- injected by bookings.js -->
+        </div>
+
+        <!-- Right side: filter tabs + clear button -->
+        <div class="bookings-toolbar__actions">
+
+          <!-- Filter tabs -->
+          <div class="filter-tabs" role="group" aria-label="Filter bookings">
+            <button class="filter-tab is-active" data-filter="all"       aria-pressed="true">All</button>
+            <button class="filter-tab"           data-filter="confirmed" aria-pressed="false">Confirmed</button>
+            <button class="filter-tab"           data-filter="cancelled" aria-pressed="false">Cancelled</button>
+          </div>
+
+          <!-- Clear history -->
+          <button class="clear-history-btn" id="clearHistoryBtn" aria-label="Clear all booking history">
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+            Clear History
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── BOOKINGS LIST ── -->
+    <div class="bookings-layout">
+      <!--
+        This div starts empty.
+        bookings.js reads LocalStorage and injects booking cards here.
+      -->
+      <div class="bookings-list" id="bookingsList" role="list" aria-label="Your bookings">
+        <!-- Injected by bookings.js -->
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ── BOOKING DETAIL MODAL ── -->
+  <!--
+    Hidden by default. JS populates it and adds .is-open
+    when the user clicks "View" on a booking card.
+  -->
+  <div class="modal-backdrop" id="bookingModal" role="dialog" aria-modal="true" aria-label="Booking details" style="display:none;">
+    <div class="modal-box" id="modalBox">
+      <button class="modal-close" id="modalClose" aria-label="Close booking details">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <div id="modalContent">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer" id="contact" role="contentinfo">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <a href="index.html" class="navbar__logo footer__logo">
+          <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+          <span>TravelEase</span>
+        </a>
+        <p class="footer__tagline">Your journey begins with a single search.</p>
+        <div class="footer__socials" aria-label="Social media links">
+          <a href="#" class="footer__social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="footer__social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <nav class="footer__nav" aria-label="Quick links">
+        <h3 class="footer__nav-title">Quick Links</h3>
+        <ul class="footer__nav-list">
+          <li><a href="index.html"    class="footer__nav-link">Home</a></li>
+          <li><a href="hotels.html"   class="footer__nav-link">Hotels</a></li>
+          <li><a href="booking.html"  class="footer__nav-link">Book Now</a></li>
+          <li><a href="bookings.html" class="footer__nav-link">My Bookings</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__nav" aria-label="Support links">
+        <h3 class="footer__nav-title">Support</h3>
+        <ul class="footer__nav-list">
+          <li><a href="#" class="footer__nav-link">FAQs</a></li>
+          <li><a href="#" class="footer__nav-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__nav-link">Terms of Service</a></li>
+        </ul>
+      </nav>
+      <address class="footer__contact" aria-label="Contact information">
+        <h3 class="footer__nav-title">Contact Us</h3>
+        <ul class="footer__contact-list">
+          <li><i class="fa-solid fa-envelope"></i><a href="mailto:hello@travelease.com" class="footer__nav-link">hello@travelease.com</a></li>
+          <li><i class="fa-solid fa-phone"></i><a href="tel:+911800123456" class="footer__nav-link">+91 1800-123-456</a></li>
+          <li><i class="fa-solid fa-location-dot"></i><span>Bengaluru, Karnataka</span></li>
+        </ul>
+      </address>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; <span id="currentYear"></span> TravelEase. All rights reserved.</p>
+      <p>Made with <i class="fa-solid fa-heart" style="color:#e74c3c;"></i> for travellers.</p>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- data.js provides formatPrice() and generateStarHTML() -->
+  <script src="js/data.js"></script>
+  <script src="js/bookings.js"></script>
+  <script src="js/features.js"></script>
+
+</body>
+</html>

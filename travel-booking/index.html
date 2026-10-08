@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<!--
+  DOCTYPE tells the browser this is an HTML5 document.
+  Always put this on the very first line.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- UTF-8 supports all characters including special symbols -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+    viewport meta tag is CRITICAL for responsive design.
+    Without it, mobile browsers zoom out and show a shrunken desktop view.
+    width=device-width → page width matches the device screen width
+    initial-scale=1.0  → no zoom on first load
+  -->
+
+  <meta name="description" content="TravelEase – Book hotels, explore destinations, and plan your perfect trip." />
+  <!-- Description shown in Google search results -->
+
+  <title>TravelEase – Explore the World, Your Way</title>
+
+  <!-- Link to our external CSS file (no inline styles!) -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Google Fonts: Inter for body text, Playfair Display for headings -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Font Awesome for icons (hamburger, search, star, etc.) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eqjn8fE/qSAkYdn7+RZg7gSvUQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <!--
+    theme.js is loaded in <head> — BEFORE the page paints.
+    This prevents a "flash of wrong theme" on page load.
+  -->
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- ============================================================
+    NAVIGATION BAR
+    <header> wraps everything at the very top of the page.
+    <nav> is the semantic tag specifically for navigation links.
+    We use a CSS class "navbar" to style it.
+  ============================================================ -->
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+
+      <!-- LOGO: clicking it takes you back to the homepage -->
+      <a href="index.html" class="navbar__logo" aria-label="TravelEase home">
+        <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+        <span>TravelEase</span>
+      </a>
+
+      <!-- DESKTOP NAV LINKS -->
+      <!-- aria-label on the ul helps screen readers understand this is the nav list -->
+      <ul class="navbar__links" id="navLinks" role="list">
+        <li><a href="index.html" class="navbar__link active" aria-current="page">Home</a></li>
+        <li><a href="#destinations" class="navbar__link">Destinations</a></li>
+        <li><a href="hotels.html" class="navbar__link">Hotels</a></li>
+        <li><a href="booking.html"            class="navbar__link">Bookings</a></li>
+        <li><a href="bookings.html"           class="navbar__link">My Bookings</a></li>
+        <li>
+          <a href="wishlist.html" class="navbar__link">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+            Wishlist
+            <span class="wishlist-badge" id="wishlistBadge" style="display:none;" aria-label="wishlist count">0</span>
+          </a>
+        </li>
+        <li><a href="#contact" class="navbar__link">Contact</a></li>
+      </ul>
+
+      <!-- HAMBURGER BUTTON (visible only on mobile) -->
+      <!--
+        aria-expanded="false" tells screen readers the menu is currently closed.
+        JavaScript in main.js will toggle this to "true" when opened.
+        aria-controls="navLinks" links this button to the menu it controls.
+      -->
+      <button
+        class="navbar__hamburger"
+        id="hamburgerBtn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="navLinks"
+      >
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+
+      <!-- Dark / Light mode toggle -->
+      <button
+        class="theme-toggle"
+        aria-label="Switch to dark mode"
+        title="Switch to dark mode"
+      >
+        <span class="theme-toggle__icon">
+          <i class="fa-solid fa-moon" aria-hidden="true"></i>
+        </span>
+      </button>
+
+    </nav>
+  </header>
+  <!-- END NAVIGATION BAR -->
+
+
+  <!-- ============================================================
+    MAIN CONTENT
+    <main> wraps all the primary content of the page.
+    There should only be ONE <main> per page.
+  ============================================================ -->
+  <main>
+
+    <!-- ============================================================
+      HERO SECTION
+      The big, eye-catching section at the top of the page.
+      Contains the headline, a short description, and a search form.
+      The background image is set via CSS (not inline style).
+    ============================================================ -->
+    <section class="hero" id="home" aria-label="Hero – Search your next destination">
+
+      <!-- Dark overlay is a CSS pseudo-element, not an extra div -->
+      <div class="hero__content">
+
+        <h1 class="hero__heading">Explore the World, <span class="hero__heading--highlight">Your Way</span></h1>
+        <p class="hero__subtext">
+          Discover breathtaking destinations, hand-picked hotels, and seamless bookings — all in one place.
+        </p>
+
+        <!-- SEARCH FORM
+          action="#" prevents page reload on submit (JS will handle the logic).
+          Each label is linked to its input via "for" + "id" — important for accessibility.
+        -->
+        <form class="search-form" id="searchForm" action="#" novalidate aria-label="Search destinations">
+
+          <!-- Destination Input -->
+          <div class="search-form__group">
+            <label for="destination" class="search-form__label">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              Destination
+            </label>
+            <input
+              type="text"
+              id="destination"
+              name="destination"
+              class="search-form__input"
+              placeholder="Where do you want to go?"
+              autocomplete="off"
+              aria-required="true"
+            />
+          </div>
+
+          <!-- Check-in Date -->
+          <div class="search-form__group">
+            <label for="checkin" class="search-form__label">
+              <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+              Check-in
+            </label>
+            <input
+              type="date"
+              id="checkin"
+              name="checkin"
+              class="search-form__input"
+              aria-required="true"
+            />
+          </div>
+
+          <!-- Check-out Date -->
+          <div class="search-form__group">
+            <label for="checkout" class="search-form__label">
+              <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+              Check-out
+            </label>
+            <input
+              type="date"
+              id="checkout"
+              name="checkout"
+              class="search-form__input"
+              aria-required="true"
+            />
+          </div>
+
+          <!-- Guests -->
+          <div class="search-form__group">
+            <label for="guests" class="search-form__label">
+              <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+              Guests
+            </label>
+            <select id="guests" name="guests" class="search-form__input" aria-required="true">
+              <option value="1">1 Guest</option>
+              <option value="2" selected>2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5+ Guests</option>
+            </select>
+          </div>
+
+          <!-- Search Button -->
+          <button type="submit" class="search-form__btn" id="searchBtn">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            Search
+          </button>
+
+        </form>
+        <!-- END SEARCH FORM -->
+
+      </div>
+      <!-- END hero__content -->
+
+    </section>
+    <!-- END HERO SECTION -->
+
+
+    <!-- ============================================================
+      POPULAR DESTINATIONS SECTION
+      Shows destination cards.
+      Each card links to the hotels page with a destination filter.
+      Data (city name, tagline, image) is stored in data.js
+      and rendered dynamically by main.js — that's why we have
+      an empty <div id="destinationsGrid"> here.
+    ============================================================ -->
+    <section class="destinations" id="destinations" aria-label="Popular destinations">
+
+      <div class="section-header">
+        <p class="section-header__eyebrow">Where to next?</p>
+        <h2 class="section-header__title">Popular Destinations</h2>
+        <p class="section-header__subtitle">
+          From sun-soaked beaches to vibrant city breaks — find your perfect escape.
+        </p>
+      </div>
+
+      <!--
+        This grid is EMPTY right now.
+        JavaScript (main.js) will read data from data.js
+        and inject destination cards here dynamically.
+        This is called "DOM manipulation" — a core JS concept.
+      -->
+      <div class="destinations__grid" id="destinationsGrid" role="list" aria-label="Destination cards">
+        <!-- Destination cards injected by main.js -->
+      </div>
+
+    </section>
+    <!-- END POPULAR DESTINATIONS -->
+
+
+    <!-- ============================================================
+      FEATURED HOTELS SECTION
+      Shows a preview of top-rated hotels.
+      Cards are rendered dynamically by main.js from data.js.
+    ============================================================ -->
+    <section class="featured-hotels" id="hotels" aria-label="Featured hotels">
+
+      <div class="section-header">
+        <p class="section-header__eyebrow">Top Picks</p>
+        <h2 class="section-header__title">Featured Hotels</h2>
+        <p class="section-header__subtitle">
+          Carefully curated stays for every budget and travel style.
+        </p>
+      </div>
+
+      <!-- Empty grid — JS injects hotel cards here -->
+      <div class="hotels__grid" id="featuredHotelsGrid" role="list" aria-label="Featured hotel cards">
+        <!-- Hotel cards injected by main.js -->
+      </div>
+
+      <!-- "View All Hotels" button -->
+      <div class="featured-hotels__cta">
+        <a href="hotels.html" class="btn btn--primary">
+          View All Hotels
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+
+    </section>
+    <!-- END FEATURED HOTELS -->
+
+
+    <!-- ============================================================
+      WHY CHOOSE US SECTION
+      Shows 4 feature cards with icons.
+      This is static HTML — no JS needed here.
+    ============================================================ -->
+    <section class="why-us" id="why-us" aria-label="Why choose TravelEase">
+
+      <div class="section-header">
+        <p class="section-header__eyebrow">Our Promise</p>
+        <h2 class="section-header__title">Why Choose Us?</h2>
+        <p class="section-header__subtitle">
+          We make travel planning simple, safe, and stress-free.
+        </p>
+      </div>
+
+      <div class="why-us__grid" role="list">
+
+        <!-- Feature Card 1: Best Prices -->
+        <article class="why-us__card" role="listitem">
+          <div class="why-us__icon" aria-hidden="true">
+            <i class="fa-solid fa-tag"></i>
+          </div>
+          <h3 class="why-us__card-title">Best Prices</h3>
+          <p class="why-us__card-text">
+            We compare thousands of deals so you always get the lowest price, guaranteed.
+          </p>
+        </article>
+
+        <!-- Feature Card 2: Secure Booking -->
+        <article class="why-us__card" role="listitem">
+          <div class="why-us__icon" aria-hidden="true">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3 class="why-us__card-title">Secure Booking</h3>
+          <p class="why-us__card-text">
+            Your payments and personal data are protected with industry-standard encryption.
+          </p>
+        </article>
+
+        <!-- Feature Card 3: 24/7 Support -->
+        <article class="why-us__card" role="listitem">
+          <div class="why-us__icon" aria-hidden="true">
+            <i class="fa-solid fa-headset"></i>
+          </div>
+          <h3 class="why-us__card-title">24/7 Support</h3>
+          <p class="why-us__card-text">
+            Our travel experts are available around the clock to help you with anything.
+          </p>
+        </article>
+
+        <!-- Feature Card 4: Easy Cancellation -->
+        <article class="why-us__card" role="listitem">
+          <div class="why-us__icon" aria-hidden="true">
+            <i class="fa-solid fa-rotate-left"></i>
+          </div>
+          <h3 class="why-us__card-title">Easy Cancellation</h3>
+          <p class="why-us__card-text">
+            Plans change — we get it. Cancel or modify your booking hassle-free.
+          </p>
+        </article>
+
+      </div>
+      <!-- END why-us__grid -->
+
+    </section>
+    <!-- END WHY CHOOSE US -->
+
+
+    <!-- ============================================================
+      NEWSLETTER / CTA SECTION
+      A simple call-to-action banner encouraging sign-ups.
+    ============================================================ -->
+    <section class="newsletter" aria-label="Newsletter signup">
+      <div class="newsletter__content">
+        <h2 class="newsletter__title">Get Exclusive Travel Deals</h2>
+        <p class="newsletter__subtitle">
+          Subscribe and be the first to know about flash sales and hidden gems.
+        </p>
+        <form class="newsletter__form" id="newsletterForm" action="#" novalidate aria-label="Newsletter subscription">
+          <input
+            type="email"
+            id="newsletterEmail"
+            name="email"
+            class="newsletter__input"
+            placeholder="Enter your email address"
+            aria-label="Email address for newsletter"
+            aria-required="true"
+          />
+          <button type="submit" class="btn btn--white">
+            Subscribe <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        </form>
+        <!-- Success/error message shown by JS -->
+        <p class="newsletter__message" id="newsletterMessage" role="alert" aria-live="polite"></p>
+      </div>
+    </section>
+    <!-- END NEWSLETTER -->
+
+  </main>
+  <!-- END MAIN CONTENT -->
+
+
+  <!-- ============================================================
+    FOOTER
+    <footer> is a semantic tag for the page footer.
+    Contains logo, nav links, and contact info.
+  ============================================================ -->
+  <footer class="footer" id="contact" role="contentinfo">
+
+    <div class="footer__container">
+
+      <!-- Footer Brand Column -->
+      <div class="footer__brand">
+        <a href="index.html" class="navbar__logo footer__logo" aria-label="TravelEase home">
+          <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+          <span>TravelEase</span>
+        </a>
+        <p class="footer__tagline">
+          Your journey begins with a single search. Explore smarter, travel better.
+        </p>
+        <!-- Social media icons -->
+        <div class="footer__socials" aria-label="Social media links">
+          <a href="#" class="footer__social-link" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="Instagram">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="Twitter / X">
+            <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer Quick Links Column -->
+      <nav class="footer__nav" aria-label="Footer quick links">
+        <h3 class="footer__nav-title">Quick Links</h3>
+        <ul class="footer__nav-list" role="list">
+          <li><a href="index.html" class="footer__nav-link">Home</a></li>
+          <li><a href="#destinations" class="footer__nav-link">Destinations</a></li>
+          <li><a href="hotels.html" class="footer__nav-link">Hotels</a></li>
+          <li><a href="booking.html" class="footer__nav-link">Book Now</a></li>
+        </ul>
+      </nav>
+
+      <!-- Footer Support Column -->
+      <nav class="footer__nav" aria-label="Footer support links">
+        <h3 class="footer__nav-title">Support</h3>
+        <ul class="footer__nav-list" role="list">
+          <li><a href="#" class="footer__nav-link">FAQs</a></li>
+          <li><a href="#" class="footer__nav-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__nav-link">Terms of Service</a></li>
+          <li><a href="#contact" class="footer__nav-link">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Footer Contact Column -->
+      <address class="footer__contact" aria-label="Contact information">
+        <h3 class="footer__nav-title">Contact Us</h3>
+        <ul class="footer__contact-list" role="list">
+          <li>
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <a href="mailto:hello@travelease.com" class="footer__nav-link">hello@travelease.com</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            <a href="tel:+911800123456" class="footer__nav-link">+91 1800-123-456</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <span>Bengaluru, Karnataka, India</span>
+          </li>
+        </ul>
+      </address>
+
+    </div>
+    <!-- END footer__container -->
+
+    <!-- Footer Bottom Bar -->
+    <div class="footer__bottom">
+      <p>&copy; <span id="currentYear"></span> TravelEase. All rights reserved.</p>
+      <p>Made with <i class="fa-solid fa-heart" aria-hidden="true" style="color:#e74c3c;"></i> for travellers.</p>
+    </div>
+
+  </footer>
+  <!-- END FOOTER -->
+
+
+  <!--
+    SCRIPTS — always placed BEFORE closing </body> tag.
+    Why? Because the browser reads HTML top to bottom.
+    If scripts were in <head>, the JS would run BEFORE the page
+    elements exist, causing errors.
+
+    Order matters:
+    1. data.js  → loads all the hotel/destination data first
+    2. main.js  → uses that data to render the page
+  -->
+  <!-- Scroll-to-top button -->
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <script src="js/data.js"></script>
+  <script src="js/wishlist.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/features.js"></script>
+
+</body>
+</html>

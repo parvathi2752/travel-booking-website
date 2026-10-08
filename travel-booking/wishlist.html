@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your saved hotels on TravelEase." />
+  <title>My Wishlist – TravelEase</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plh7eqjn8fE/qSAkYdn7+RZg7gSvUQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    /* ============================================================
+       WISHLIST PAGE — STYLES
+    ============================================================ */
+
+    /* ── Hero banner ── */
+    .page-hero {
+      background:
+        linear-gradient(135deg, rgba(55,8,30,0.85) 0%, rgba(217,48,37,0.60) 100%),
+        linear-gradient(160deg, #1a0814 0%, #8b1a1a 50%, #1a4fa8 100%);
+      padding: var(--sp-16) var(--sp-6) var(--sp-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    .page-hero__content { position: relative; z-index: 1; }
+    .page-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-5);
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: var(--sp-5);
+    }
+    .page-hero__title {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-4xl);
+      font-weight: 700;
+      color: var(--clr-white);
+      margin-bottom: var(--sp-4);
+      text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .page-hero__subtitle {
+      font-size: var(--fs-md);
+      color: rgba(255,255,255,0.80);
+      max-width: 460px;
+      margin-inline: auto;
+    }
+
+    /* ── Toolbar ── */
+    .wishlist-toolbar {
+      background: var(--clr-white);
+      border-bottom: 1px solid var(--clr-border);
+      padding: var(--sp-4) var(--sp-6);
+      position: sticky;
+      top: var(--navbar-height);
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .wishlist-toolbar__inner {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+    }
+    .wishlist-count {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-muted);
+    }
+    .wishlist-count strong {
+      color: var(--clr-text-heading);
+      font-size: var(--fs-base);
+    }
+    .wishlist-toolbar__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+    .clear-wishlist-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      border: 1.5px solid var(--clr-danger);
+      color: var(--clr-danger);
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--ease-base);
+      white-space: nowrap;
+    }
+    .clear-wishlist-btn:hover {
+      background: var(--clr-danger);
+      color: var(--clr-white);
+    }
+
+    /* ── Main layout ── */
+    .wishlist-layout {
+      max-width: var(--max-width);
+      margin-inline: auto;
+      padding: var(--sp-8) var(--sp-6) var(--sp-16);
+    }
+
+    /* ── Wishlist grid — 3 columns desktop ── */
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-6);
+    }
+
+    /* ── Wishlist card ── */
+    .wishlist-card {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--ease-base), box-shadow var(--ease-base);
+      animation: cardSlideIn 0.35s ease both;
+    }
+    .wishlist-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* Image section */
+    .wishlist-card__img-wrap {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    .wishlist-card__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--ease-slow);
+    }
+    .wishlist-card:hover .wishlist-card__img-wrap img {
+      transform: scale(1.06);
+    }
+
+    /* Category badge on image */
+    .wishlist-card__badge {
+      position: absolute;
+      top: var(--sp-3);
+      left: var(--sp-3);
+      z-index: 1;
+    }
+
+    /*
+      Heart button — active (filled) on wishlist page since
+      all cards here are already in the wishlist.
+      data-wishlist-id is present so WishlistManager can toggle it.
+    */
+    .wishlist-card__heart {
+      position: absolute;
+      top: var(--sp-3);
+      right: var(--sp-3);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--clr-danger);
+      font-size: var(--fs-base);
+      z-index: 1;
+      box-shadow: var(--shadow-xs);
+      transition: transform var(--ease-fast), background var(--ease-fast);
+    }
+    .wishlist-card__heart:hover {
+      transform: scale(1.15);
+      background: var(--clr-white);
+    }
+
+    /* Price tag on image bottom */
+    .wishlist-card__price-tag {
+      position: absolute;
+      bottom: var(--sp-3);
+      right: var(--sp-3);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: var(--sp-1) var(--sp-3);
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Card body */
+    .wishlist-card__body {
+      padding: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      flex: 1;
+    }
+    .wishlist-card__location {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--clr-primary);
+    }
+    .wishlist-card__name {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      color: var(--clr-text-heading);
+      line-height: 1.3;
+    }
+    .wishlist-card__desc {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-muted);
+      line-height: 1.6;
+      /* clamp to 2 lines */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .wishlist-card__meta {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      font-size: var(--fs-sm);
+      flex-wrap: wrap;
+    }
+
+    /* Card footer: three action buttons */
+    .wishlist-card__footer {
+      padding: var(--sp-4) var(--sp-5);
+      border-top: 1px solid var(--clr-border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-2);
+      background: rgba(248,249,252,0.6);
+    }
+    /* "Book Now" spans both columns */
+    .wishlist-card__btn-book {
+      grid-column: 1 / -1;
+    }
+    .wishlist-card__btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: var(--radius-md);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid;
+      transition: all var(--ease-base);
+      text-align: center;
+      white-space: nowrap;
+    }
+    /* Book Now — filled blue */
+    .wishlist-card__btn--book {
+      background: var(--clr-primary);
+      color: white;
+      border-color: var(--clr-primary);
+      padding: var(--sp-3) var(--sp-4);
+    }
+    .wishlist-card__btn--book:hover {
+      background: var(--clr-primary-dark);
+      border-color: var(--clr-primary-dark);
+    }
+    /* View Hotel — outline */
+    .wishlist-card__btn--view {
+      background: transparent;
+      color: var(--clr-primary);
+      border-color: var(--clr-primary);
+    }
+    .wishlist-card__btn--view:hover {
+      background: var(--clr-primary);
+      color: white;
+    }
+    /* Remove — danger outline */
+    .wishlist-card__btn--remove {
+      background: transparent;
+      color: var(--clr-danger);
+      border-color: var(--clr-danger);
+    }
+    .wishlist-card__btn--remove:hover {
+      background: var(--clr-danger);
+      color: white;
+    }
+
+    /* ── Empty state ── */
+    .wishlist-empty {
+      text-align: center;
+      padding: var(--sp-24) var(--sp-6);
+    }
+    .wishlist-empty__heart {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #fff5f5;
+      border: 2px solid rgba(217,48,37,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: auto;
+      margin-bottom: var(--sp-6);
+      font-size: 2.5rem;
+      color: var(--clr-danger);
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1);    }
+      50%       { transform: scale(1.12); }
+    }
+    .wishlist-empty h2 {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-2xl);
+      color: var(--clr-text-heading);
+      margin-bottom: var(--sp-3);
+    }
+    .wishlist-empty p {
+      font-size: var(--fs-base);
+      color: var(--clr-text-muted);
+      max-width: 380px;
+      margin-inline: auto;
+      margin-bottom: var(--sp-8);
+      line-height: 1.7;
+    }
+
+    /* ── View Hotel modal (reuse same pattern as hotels.js) ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-4);
+      opacity: 0;
+      transition: opacity var(--ease-base);
+    }
+    .modal-backdrop.is-open { opacity: 1; }
+    .modal-box {
+      background: var(--clr-white);
+      border-radius: var(--radius-xl);
+      max-width: 560px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(16px) scale(0.97);
+      transition: transform var(--ease-base);
+    }
+    .modal-backdrop.is-open .modal-box { transform: translateY(0) scale(1); }
+    .modal-close {
+      position: absolute;
+      top: var(--sp-3);
+      right: var(--sp-3);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.45);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--fs-base);
+      z-index: 1;
+      transition: background var(--ease-fast);
+    }
+    .modal-close:hover { background: var(--clr-danger); }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .wishlist-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .wishlist-grid { grid-template-columns: 1fr; }
+      .page-hero__title { font-size: var(--fs-3xl); }
+      .wishlist-toolbar__inner { flex-direction: column; align-items: flex-start; }
+    }
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <a href="index.html" class="navbar__logo" aria-label="TravelEase home">
+        <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+        <span>TravelEase</span>
+      </a>
+      <ul class="navbar__links" id="navLinks" role="list">
+        <li><a href="index.html"              class="navbar__link">Home</a></li>
+        <li><a href="index.html#destinations" class="navbar__link">Destinations</a></li>
+        <li><a href="hotels.html"             class="navbar__link">Hotels</a></li>
+        <li><a href="booking.html"            class="navbar__link">Bookings</a></li>
+        <li><a href="bookings.html"           class="navbar__link">My Bookings</a></li>
+        <li>
+          <a href="wishlist.html" class="navbar__link active" aria-current="page">
+            <i class="fa-solid fa-heart" aria-hidden="true"></i>
+            Wishlist
+            <span class="wishlist-badge" id="wishlistBadge" style="display:none;" aria-label="wishlist count">0</span>
+          </a>
+        </li>
+      </ul>
+      <button
+        class="navbar__hamburger" id="hamburgerBtn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false" aria-controls="navLinks"
+      >
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+        <span class="hamburger__bar"></span>
+      </button>
+
+      <!-- Dark / Light mode toggle -->
+      <button class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <span class="theme-toggle__icon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span>
+      </button>
+
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- ── PAGE HERO ── -->
+    <section class="page-hero" aria-label="Wishlist page header">
+      <div class="page-hero__content">
+        <p class="page-hero__eyebrow">
+          <i class="fa-solid fa-heart" aria-hidden="true"></i>
+          Saved Hotels
+        </p>
+        <h1 class="page-hero__title">My Wishlist</h1>
+        <p class="page-hero__subtitle">
+          Hotels you've saved. Book them before someone else does.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── TOOLBAR ── -->
+    <div class="wishlist-toolbar" role="toolbar" aria-label="Wishlist controls">
+      <div class="wishlist-toolbar__inner">
+        <!-- Count — filled by JS -->
+        <p class="wishlist-count" id="wishlistCount" aria-live="polite">
+          <strong>0</strong> saved hotels
+        </p>
+        <div class="wishlist-toolbar__actions">
+          <a href="hotels.html" class="btn btn--outline" style="padding:var(--sp-2) var(--sp-5);font-size:var(--fs-xs);">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+            Add More Hotels
+          </a>
+          <button class="clear-wishlist-btn" id="clearWishlistBtn" aria-label="Clear entire wishlist">
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+            Clear Wishlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── WISHLIST GRID ── -->
+    <div class="wishlist-layout">
+      <div class="wishlist-grid" id="wishlistGrid" role="list" aria-label="Saved hotels">
+        <!-- Injected by wishlist-page.js -->
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ── VIEW HOTEL MODAL ── -->
+  <div class="modal-backdrop" id="hotelModal" role="dialog" aria-modal="true" aria-label="Hotel details" style="display:none;">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer" id="contact" role="contentinfo">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <a href="index.html" class="navbar__logo footer__logo">
+          <i class="fa-solid fa-plane-departure" aria-hidden="true"></i>
+          <span>TravelEase</span>
+        </a>
+        <p class="footer__tagline">Your journey begins with a single search.</p>
+        <div class="footer__socials" aria-label="Social media links">
+          <a href="#" class="footer__social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="footer__social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="footer__social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <nav class="footer__nav" aria-label="Quick links">
+        <h3 class="footer__nav-title">Quick Links</h3>
+        <ul class="footer__nav-list">
+          <li><a href="index.html"    class="footer__nav-link">Home</a></li>
+          <li><a href="hotels.html"   class="footer__nav-link">Hotels</a></li>
+          <li><a href="booking.html"  class="footer__nav-link">Book Now</a></li>
+          <li><a href="bookings.html" class="footer__nav-link">My Bookings</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__nav" aria-label="Support links">
+        <h3 class="footer__nav-title">Support</h3>
+        <ul class="footer__nav-list">
+          <li><a href="#" class="footer__nav-link">FAQs</a></li>
+          <li><a href="#" class="footer__nav-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__nav-link">Terms of Service</a></li>
+        </ul>
+      </nav>
+      <address class="footer__contact" aria-label="Contact information">
+        <h3 class="footer__nav-title">Contact Us</h3>
+        <ul class="footer__contact-list">
+          <li><i class="fa-solid fa-envelope"></i><a href="mailto:hello@travelease.com" class="footer__nav-link">hello@travelease.com</a></li>
+          <li><i class="fa-solid fa-phone"></i><a href="tel:+911800123456" class="footer__nav-link">+91 1800-123-456</a></li>
+          <li><i class="fa-solid fa-location-dot"></i><span>Bengaluru, Karnataka</span></li>
+        </ul>
+      </address>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; <span id="currentYear"></span> TravelEase. All rights reserved.</p>
+      <p>Made with <i class="fa-solid fa-heart" style="color:#e74c3c;"></i> for travellers.</p>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!--
+    Load order:
+    1. data.js        → hotels[] array + formatPrice(), generateStarHTML()
+    2. wishlist.js    → WishlistManager (read/write LocalStorage)
+    3. wishlist-page.js → renders the page using both of the above
+  -->
+  <script src="js/data.js"></script>
+  <script src="js/wishlist.js"></script>
+  <script src="js/wishlist-page.js"></script>
+  <script src="js/features.js"></script>
+
+</body>
+</html>

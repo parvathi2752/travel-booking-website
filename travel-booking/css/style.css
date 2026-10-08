@@ -1,0 +1,3595 @@
+/* ================================================================
+   TravelEase — style.css
+   A modern, professional travel website stylesheet.
+
+   TABLE OF CONTENTS
+   -----------------
+   01. CSS Custom Properties (Design Tokens)
+   02. CSS Reset & Base
+   03. Typography Scale
+   04. Reusable Utilities & Buttons
+   05. Navbar
+   06. Hero Section
+   07. Search Form
+   08. Section Header (shared)
+   09. Destination Cards
+   10. Hotel Cards
+   11. Why Choose Us
+   12. Newsletter / CTA
+   13. Footer
+   14. Scroll-to-Top Button
+   15. Toast Notification
+   16. Animations & Scroll Reveal
+   17. Media Queries
+       — ≤ 1024px  (Tablet Landscape)
+       — ≤  768px  (Tablet Portrait / Mobile)
+       — ≤  480px  (Large Mobile)
+       — ≤  360px  (Small Mobile)
+================================================================ */
+
+
+/* ================================================================
+   01. CSS CUSTOM PROPERTIES
+   ----------------------------------------------------------------
+   CONCEPT: CSS Variables (Custom Properties)
+   -----------------------------------------------
+   CSS variables work exactly like variables in JavaScript.
+   You define them once inside :root (which targets the <html>
+   element, making them available everywhere on the page), then
+   use them with var(--name).
+
+   WHY THIS MATTERS:
+   • Change one value → updates everywhere instantly.
+   • Makes the design system consistent (same blue used for
+     buttons, links, icons — never slightly different shades).
+   • Much easier to maintain than searching for colour codes.
+
+   Example:
+     --clr-primary: #1a73e8;
+     background-color: var(--clr-primary);   ← uses it
+================================================================ */
+:root {
+
+  /* --- BRAND COLOURS --- */
+  --clr-primary:        #1a73e8;   /* Main brand blue                        */
+  --clr-primary-dark:   #1557b0;   /* Darker blue for hover states            */
+  --clr-primary-light:  #e8f1fd;   /* Very pale blue for subtle backgrounds   */
+  --clr-secondary:      #f4a228;   /* Warm amber — star ratings, accents      */
+  --clr-success:        #1e8c45;   /* Green — success messages                */
+  --clr-danger:         #d93025;   /* Red — errors, hearts                    */
+
+  /* --- NEUTRAL PALETTE --- */
+  --clr-white:          #ffffff;
+  --clr-bg:             #f5f7fa;   /* Page background — very light grey-blue  */
+  --clr-surface:        #ffffff;   /* Card / panel background                 */
+  --clr-border:         #e2e8f0;   /* Subtle borders                          */
+
+  /* --- TEXT COLOURS --- */
+  --clr-text-heading:   #0f172a;   /* Almost black — headings                 */
+  --clr-text-body:      #334155;   /* Dark slate — main body text             */
+  --clr-text-muted:     #64748b;   /* Medium grey — labels, captions          */
+  --clr-text-faint:     #94a3b8;   /* Light grey — placeholders               */
+
+  /* --- TYPOGRAPHY --- */
+  --ff-heading: 'Playfair Display', Georgia, serif;
+  --ff-body:    'Inter', system-ui, -apple-system, sans-serif;
+
+  /* --- FONT SIZE SCALE (rem = relative to 16px root) --- */
+  --fs-2xs:  0.625rem;   /* 10px */
+  --fs-xs:   0.75rem;    /* 12px */
+  --fs-sm:   0.875rem;   /* 14px */
+  --fs-base: 1rem;       /* 16px */
+  --fs-md:   1.125rem;   /* 18px */
+  --fs-lg:   1.25rem;    /* 20px */
+  --fs-xl:   1.5rem;     /* 24px */
+  --fs-2xl:  2rem;       /* 32px */
+  --fs-3xl:  2.5rem;     /* 40px */
+  --fs-4xl:  3.25rem;    /* 52px */
+  --fs-5xl:  4rem;       /* 64px */
+
+  /* --- SPACING SCALE (multiples of 4px) --- */
+  --sp-1:  0.25rem;   /*  4px */
+  --sp-2:  0.5rem;    /*  8px */
+  --sp-3:  0.75rem;   /* 12px */
+  --sp-4:  1rem;      /* 16px */
+  --sp-5:  1.25rem;   /* 20px */
+  --sp-6:  1.5rem;    /* 24px */
+  --sp-8:  2rem;      /* 32px */
+  --sp-10: 2.5rem;    /* 40px */
+  --sp-12: 3rem;      /* 48px */
+  --sp-16: 4rem;      /* 64px */
+  --sp-20: 5rem;      /* 80px */
+  --sp-24: 6rem;      /* 96px */
+
+  /* --- BORDER RADIUS --- */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-full: 9999px;   /* Perfect pill / circle */
+
+  /* --- BOX SHADOWS ---
+     CONCEPT: Layered shadows look more realistic than a single shadow.
+     We use two layers: a soft diffuse shadow + a sharp small shadow.  */
+  --shadow-xs: 0 1px 2px rgba(15,23,42,0.06);
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.08),
+               0 1px 2px rgba(15,23,42,0.06);
+  --shadow-md: 0 4px 16px rgba(15,23,42,0.10),
+               0 2px 4px  rgba(15,23,42,0.06);
+  --shadow-lg: 0 10px 36px rgba(15,23,42,0.12),
+               0 4px  10px rgba(15,23,42,0.07);
+  --shadow-xl: 0 20px 60px rgba(15,23,42,0.15),
+               0 8px  20px rgba(15,23,42,0.08);
+
+  /* --- TRANSITIONS --- */
+  --ease-fast: 150ms ease;
+  --ease-base: 250ms ease;
+  --ease-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- LAYOUT --- */
+  --max-width:     1200px;
+  --navbar-height: 72px;
+}
+
+
+/* ================================================================
+   DARK MODE — CSS CUSTOM PROPERTY OVERRIDES
+   ----------------------------------------------------------------
+   CONCEPT: How this works in one sentence:
+   When JavaScript adds  data-theme="dark"  to the <html> element,
+   the browser re-reads every  var(--clr-*)  reference on the page
+   using these overridden values instead of the :root ones above.
+
+   NO rules are duplicated.  background: var(--clr-bg) stays as-is
+   in every component — it just picks up the new value automatically.
+
+   Selector:  [data-theme="dark"]
+   → matches the <html> element when it has attribute data-theme="dark"
+   → overrides only the colour tokens; spacing/font tokens unchanged
+================================================================ */
+[data-theme="dark"] {
+
+  /* ── Brand colours ── */
+  --clr-primary:        #60a5fa;   /* softer blue — readable on dark bg   */
+  --clr-primary-dark:   #3b82f6;
+  --clr-primary-light:  #1e3a5f;   /* used for subtle highlights           */
+  --clr-secondary:      #fbbf24;   /* amber stays vibrant                  */
+  --clr-success:        #34d399;
+  --clr-danger:         #f87171;
+
+  /* ── Neutral palette ── */
+  --clr-white:          #1e293b;   /* "white" surfaces become dark slate   */
+  --clr-bg:             #0f172a;   /* page background — deep navy          */
+  --clr-surface:        #1e293b;   /* card backgrounds                     */
+  --clr-border:         #334155;   /* borders become lighter grey          */
+
+  /* ── Text colours ── */
+  --clr-text-heading:   #f1f5f9;   /* near-white headings                  */
+  --clr-text-body:      #cbd5e1;   /* light slate body text                */
+  --clr-text-muted:     #94a3b8;   /* medium grey for labels               */
+  --clr-text-faint:     #64748b;   /* faint text for placeholders          */
+}
+
+
+/* ================================================================
+   SMOOTH THEME TRANSITION
+   ----------------------------------------------------------------
+   When the user toggles the theme, these transitions animate
+   colour changes over 300ms instead of snapping instantly.
+
+   We only transition background-color, color, and border-color
+   (the properties CSS variables affect).
+
+   We use a targeted approach rather than * { transition: ... }
+   to avoid interfering with existing transform/opacity animations
+   on cards, buttons, and modals.
+================================================================ */
+body,
+.navbar,
+.hotel-card,
+.hotel-card__body,
+.hotel-card__footer,
+.hotel-card__image-wrap,
+.destination-card__overlay,
+.why-us__card,
+.booking-form-card,
+.form-input,
+.filters,
+.filter-btn,
+.btn,
+.footer,
+.footer__container,
+.booking-card,
+.wishlist-card,
+.booking-summary,
+.summary-body,
+.summary-total,
+.toast,
+main,
+section,
+article,
+aside,
+header,
+nav {
+  transition:
+    background-color 0.3s ease,
+    border-color     0.3s ease,
+    color            0.18s ease;
+}
+
+
+/* ================================================================
+   NAVBAR: ensure toggle button fits alongside hamburger
+================================================================ */
+.navbar {
+  /* Already flex — just make sure the new button doesn't wrap */
+  flex-wrap: nowrap;
+  gap: var(--sp-2);
+}
+
+
+/* ================================================================
+   DARK MODE — COMPONENT ADJUSTMENTS
+   ----------------------------------------------------------------
+   A small number of components use hard-coded rgba() colours
+   or non-variable backgrounds that need explicit dark overrides.
+================================================================ */
+
+/* Navbar frosted glass — needs a darker base in dark mode */
+[data-theme="dark"] .navbar {
+  background-color: rgba(15, 23, 42, 0.96);
+  border-bottom-color: var(--clr-border);
+}
+
+/* Hero gradient is already rich enough — just lighten the dot pattern */
+[data-theme="dark"] .hero::after {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+}
+
+/* Search form — inputs need a dark background */
+[data-theme="dark"] .search-form {
+  background-color: var(--clr-surface);
+}
+[data-theme="dark"] .search-form__group:hover,
+[data-theme="dark"] .search-form__group:focus-within {
+  background-color: var(--clr-primary-light);
+}
+[data-theme="dark"] .search-form__input {
+  color: var(--clr-text-heading);
+  color-scheme: dark;
+}
+
+/* Hotel + destination cards */
+[data-theme="dark"] .hotel-card {
+  background-color: var(--clr-surface);
+  border-color: var(--clr-border);
+}
+[data-theme="dark"] .hotel-card__footer {
+  background-color: rgba(255,255,255,0.03);
+  border-top-color: var(--clr-border);
+}
+[data-theme="dark"] .hotel-card__wishlist {
+  background-color: rgba(30, 41, 59, 0.92);
+  color: var(--clr-text-muted);
+}
+
+/* Why-us cards */
+[data-theme="dark"] .why-us__card {
+  background-color: var(--clr-surface);
+  border-color: var(--clr-border);
+}
+[data-theme="dark"] .why-us__icon {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+
+/* Skeleton shimmer */
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--clr-surface) 25%,
+    #2d3f55            50%,
+    var(--clr-surface) 75%
+  );
+}
+
+/* Footer already uses hard-coded dark colours — keep them */
+[data-theme="dark"] .footer {
+  background-color: #070d1a;
+}
+
+/* Toast */
+[data-theme="dark"] .toast {
+  background-color: var(--clr-surface);
+  color: var(--clr-text-heading);
+  border: 1px solid var(--clr-border);
+}
+
+
+/* ================================================================
+   DARK MODE TOGGLE BUTTON
+   ----------------------------------------------------------------
+   The toggle button lives inside the navbar.
+   It shows a ☀ (sun) in dark mode and 🌙 (moon) in light mode.
+================================================================ */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--clr-border);
+  background: transparent;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  font-size: var(--fs-base);
+  flex-shrink: 0;
+  transition:
+    background-color var(--ease-base),
+    border-color     var(--ease-base),
+    color            var(--ease-base),
+    transform        var(--ease-fast);
+}
+
+.theme-toggle:hover {
+  background-color: var(--clr-primary-light);
+  border-color: var(--clr-primary);
+  color: var(--clr-primary);
+  transform: rotate(20deg) scale(1.1);
+}
+
+/* The icon inside — swaps between sun and moon */
+.theme-toggle__icon {
+  display: block;
+  line-height: 1;
+  /* Spin animation when toggling */
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-toggle.is-spinning .theme-toggle__icon {
+  transform: rotate(360deg);
+}
+
+
+/* ================================================================
+   02. CSS RESET & BASE STYLES
+   ----------------------------------------------------------------
+   CONCEPT: CSS Reset
+   -----------------------------------------------
+   Every browser (Chrome, Firefox, Safari) ships with its own
+   default stylesheet. These defaults differ from browser to
+   browser — causing inconsistent spacing, font sizes, and styles.
+
+   We reset them to a predictable baseline so we are in full
+   control of the design.
+
+   KEY RULES:
+   • box-sizing: border-box  → padding/border included in width
+   • margin/padding: 0       → no surprise spacing
+   • scroll-behavior: smooth → anchor links scroll gently
+================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;              /* 1rem = 16px baseline */
+  scroll-behavior: smooth;      /* Smooth anchor scrolling */
+  -webkit-text-size-adjust: 100%; /* Prevent iOS font scaling on rotation */
+}
+
+body {
+  font-family: var(--ff-body);
+  font-size: var(--fs-base);
+  line-height: 1.65;
+  color: var(--clr-text-body);
+  background-color: var(--clr-bg);
+  overflow-x: hidden;           /* No horizontal scroll ever */
+  -webkit-font-smoothing: antialiased;   /* Crisper text on Mac/iOS */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove list bullets — we style lists ourselves */
+ul, ol { list-style: none; }
+
+/* Links: no underline by default — we add it where needed */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--ease-fast);
+}
+
+/* Images: always responsive, never overflow */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Buttons/inputs: inherit the page font (browsers default to system font) */
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button { cursor: pointer; }
+
+/* Accessible custom focus ring — replaces ugly browser default outline */
+:focus-visible {
+  outline: 3px solid var(--clr-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+/* Remove focus ring for mouse users (only show for keyboard navigation) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* ================================================================
+   03. TYPOGRAPHY SCALE
+   ----------------------------------------------------------------
+   Consistent heading sizes across all pages.
+================================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ff-heading);
+  color: var(--clr-text-heading);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h1 { font-size: var(--fs-4xl); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-xl);  }
+h4 { font-size: var(--fs-lg);  }
+
+p  { color: var(--clr-text-body); line-height: 1.7; }
+
+
+/* ================================================================
+   04. REUSABLE UTILITIES & BUTTONS
+   ----------------------------------------------------------------
+   CONCEPT: Utility classes / Component classes
+   -----------------------------------------------
+   These classes are written once and reused across all 4 pages.
+   This is the "Don't Repeat Yourself" (DRY) principle in CSS.
+
+   .container  → centres content and limits its max width
+   .btn        → base button styles
+   .btn--*     → button variant modifiers (BEM naming)
+
+   CONCEPT: BEM (Block Element Modifier)
+   -----------------------------------------------
+   A naming convention that keeps CSS predictable:
+     .block              → the component   (.btn)
+     .block__element     → a part of it    (.hotel-card__title)
+     .block--modifier    → a variation     (.btn--primary)
+================================================================ */
+
+/* Centre + cap the width of any content block */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;        /* margin-inline = margin-left + margin-right */
+  padding-inline: var(--sp-6);
+}
+
+/* ---- BASE BUTTON ---- */
+/*
+  CONCEPT: Inheritance + Layering
+  We define shared styles on .btn, then layer variant classes
+  (.btn--primary, .btn--outline) on top. This avoids repeating
+  padding, font-weight, border-radius on every variant.
+*/
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0.7rem var(--sp-6);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 2px solid transparent;
+  white-space: nowrap;
+  transition:
+    background-color var(--ease-base),
+    border-color     var(--ease-base),
+    color            var(--ease-base),
+    transform        var(--ease-fast),
+    box-shadow       var(--ease-base);
+}
+
+/* Lift effect — gives buttons a tactile feel */
+.btn:hover  { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn:active { transform: translateY(0px);  box-shadow: var(--shadow-xs); }
+
+/* Filled blue button */
+.btn--primary {
+  background-color: var(--clr-primary);
+  border-color: var(--clr-primary);
+  color: var(--clr-white);
+}
+.btn--primary:hover {
+  background-color: var(--clr-primary-dark);
+  border-color: var(--clr-primary-dark);
+}
+
+/* Ghost / outline button */
+.btn--outline {
+  background-color: transparent;
+  border-color: var(--clr-primary);
+  color: var(--clr-primary);
+}
+.btn--outline:hover {
+  background-color: var(--clr-primary);
+  color: var(--clr-white);
+}
+
+/* White button for dark backgrounds */
+.btn--white {
+  background-color: var(--clr-white);
+  border-color: var(--clr-white);
+  color: var(--clr-primary);
+}
+.btn--white:hover {
+  background-color: var(--clr-primary-light);
+  border-color: var(--clr-primary-light);
+}
+
+/* Large size modifier */
+.btn--lg {
+  padding: 0.875rem var(--sp-8);
+  font-size: var(--fs-md);
+}
+
+/* ---- BADGE ---- */
+.badge {
+  display: inline-block;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background-color: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+
+/* ---- STAR RATING ---- */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--clr-secondary);
+  font-size: var(--fs-sm);
+}
+
+
+/* ================================================================
+   05. NAVBAR
+   ----------------------------------------------------------------
+   CONCEPT: position: sticky
+   -----------------------------------------------
+   sticky keeps the navbar at the top of the screen as the user
+   scrolls — but unlike position:fixed it doesn't overlap content
+   until the user actually reaches that scroll position.
+
+   CONCEPT: z-index
+   -----------------------------------------------
+   z-index controls the stacking order. The navbar needs z-index:
+   1000 to always sit above cards, overlays, and dropdowns.
+
+   CONCEPT: Flexbox for the navbar
+   -----------------------------------------------
+   display: flex with justify-content: space-between pushes the
+   logo to the left and links to the right automatically.
+================================================================ */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--navbar-height);
+
+  /* Flexbox: logo ← → links + hamburger */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-inline: var(--sp-8);
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);           /* Frosted glass effect */
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--ease-base), background-color var(--ease-base);
+}
+
+/* JS adds this class on scroll to strengthen the shadow */
+.navbar--scrolled {
+  box-shadow: var(--shadow-md);
+}
+
+/* --- LOGO --- */
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--ff-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--clr-primary);
+  flex-shrink: 0;   /* Never let the logo shrink */
+}
+.navbar__logo i    { font-size: 1.3em; }
+.navbar__logo:hover { color: var(--clr-primary-dark); }
+
+/* --- DESKTOP NAV LINKS --- */
+/*
+  CONCEPT: Flexbox for horizontal links
+  gap: var(--sp-1) adds breathing room between each link.
+*/
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.navbar__link {
+  position: relative;   /* Needed for the ::after underline trick */
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-body);
+  border-radius: var(--radius-sm);
+  transition: color var(--ease-fast), background-color var(--ease-fast);
+}
+
+.navbar__link:hover,
+.navbar__link.active {
+  color: var(--clr-primary);
+  background-color: var(--clr-primary-light);
+}
+
+/*
+  CONCEPT: CSS ::after pseudo-element
+  -----------------------------------------------
+  We create a decorative underline using ::after instead of
+  text-decoration. This gives us full control over its colour,
+  width, and animated entrance.
+  content: '' is required — without it the element won't render.
+*/
+.navbar__link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: var(--sp-4);
+  right: var(--sp-4);
+  height: 2px;
+  background-color: var(--clr-primary);
+  border-radius: var(--radius-full);
+}
+
+/* --- HAMBURGER BUTTON (mobile only) --- */
+.navbar__hamburger {
+  display: none;           /* Hidden on desktop */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: none;
+  border: none;
+  transition: background-color var(--ease-fast);
+}
+.navbar__hamburger:hover { background-color: var(--clr-primary-light); }
+
+.hamburger__bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--clr-text-heading);
+  border-radius: var(--radius-full);
+  /*
+    CONCEPT: CSS transform transitions
+    Each bar has its own transform. JS adds .is-open and the bars
+    rotate/fade into an X shape — no images or icons needed.
+  */
+  transition:
+    transform var(--ease-base),
+    opacity   var(--ease-base),
+    width     var(--ease-base);
+}
+
+/* Animate bars into × when menu opens */
+.navbar__hamburger.is-open .hamburger__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.navbar__hamburger.is-open .hamburger__bar:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.navbar__hamburger.is-open .hamburger__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* ================================================================
+   06. HERO SECTION
+   ----------------------------------------------------------------
+   CONCEPT: min-height: 100vh
+   -----------------------------------------------
+   100vh = 100% of the viewport (screen) height.
+   We subtract the navbar height so the section fills exactly
+   the remaining visible area below the navbar.
+
+   CONCEPT: CSS Gradients
+   -----------------------------------------------
+   We stack two linear-gradient() layers as the background.
+   Layer 1 (front): dark overlay to make white text readable.
+   Layer 2 (back):  vibrant travel-inspired gradient (sky/ocean).
+
+   CONCEPT: CSS @keyframes animation
+   -----------------------------------------------
+   @keyframes defines the steps of an animation.
+   animation: float 8s ease-in-out infinite applies it.
+================================================================ */
+
+.hero {
+  position: relative;
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--sp-24) var(--sp-6);
+  overflow: hidden;
+
+  /* Two gradient layers stacked */
+  background:
+    /* Layer 1 — dark overlay for text legibility */
+    linear-gradient(
+      160deg,
+      rgba(8, 20, 55, 0.78) 0%,
+      rgba(26, 115, 232, 0.55) 100%
+    ),
+    /* Layer 2 — rich travel gradient */
+    linear-gradient(
+      135deg,
+      #081437 0%,
+      #1a4fa8 35%,
+      #0e8a6e 65%,
+      #1a73e8 100%
+    );
+}
+
+/* Decorative floating circle — top right */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 700px 500px at 80% 20%, rgba(244,162,40,0.18), transparent),
+    radial-gradient(ellipse 500px 400px at 20% 80%, rgba(26,115,232,0.25), transparent);
+  pointer-events: none;
+  animation: heroGlow 10s ease-in-out infinite alternate;
+}
+
+@keyframes heroGlow {
+  from { opacity: 0.7; transform: scale(1);    }
+  to   { opacity: 1;   transform: scale(1.06); }
+}
+
+/* Floating dots pattern overlay */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+
+/* Hero content sits above decorative layers via z-index */
+.hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  width: 100%;
+}
+
+/* Small eyebrow label above the main heading */
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-5);
+  border-radius: var(--radius-full);
+  background-color: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(8px);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-6);
+}
+
+.hero__heading {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-5xl);
+  font-weight: 700;
+  color: var(--clr-white);
+  line-height: 1.1;
+  margin-bottom: var(--sp-6);
+  /*
+    CONCEPT: text-shadow
+    Adds depth and improves readability against the gradient background.
+  */
+  text-shadow: 0 2px 20px rgba(0,0,0,0.35);
+}
+
+/* The "Your Way" highlighted span */
+.hero__heading em {
+  font-style: normal;
+  color: var(--clr-secondary);
+  position: relative;
+}
+
+/* Decorative underline under the highlight */
+.hero__heading em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--clr-secondary), transparent);
+  border-radius: var(--radius-full);
+}
+
+.hero__subtext {
+  font-size: var(--fs-lg);
+  color: rgba(255,255,255,0.85);
+  max-width: 560px;
+  margin-inline: auto;
+  margin-bottom: var(--sp-10);
+  line-height: 1.75;
+}
+
+/* Trust indicators row below the form */
+.hero__trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-8);
+  margin-top: var(--sp-8);
+  flex-wrap: wrap;
+}
+
+.hero__trust-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+.hero__trust-item i {
+  color: var(--clr-secondary);
+  font-size: var(--fs-base);
+}
+
+
+/* ================================================================
+   07. SEARCH FORM
+   ----------------------------------------------------------------
+   CONCEPT: CSS Grid with mixed column sizes
+   -----------------------------------------------
+   grid-template-columns: 2fr 1fr 1fr 1fr auto
+   • 2fr = destination field gets twice the space of others
+   • 1fr = equal space for dates and guests
+   • auto = button takes only as much width as it needs
+
+   CONCEPT: :focus-within pseudo-class
+   -----------------------------------------------
+   :focus-within matches a parent when ANY child has focus.
+   We use it to highlight the active form group when the user
+   clicks or tabs into it — great UX pattern.
+================================================================ */
+
+.search-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  background-color: var(--clr-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  text-align: left;
+}
+
+/* Each field group: label stacked above input */
+.search-form__group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--sp-5) var(--sp-5);
+  border-right: 1px solid var(--clr-border);
+  transition: background-color var(--ease-fast);
+  min-width: 0;   /* Prevents grid blowout on small screens */
+}
+
+.search-form__group:hover,
+.search-form__group:focus-within {
+  background-color: var(--clr-primary-light);
+}
+
+.search-form__label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-text-muted);
+  margin-bottom: var(--sp-1);
+  white-space: nowrap;
+}
+
+.search-form__label i {
+  color: var(--clr-primary);
+  font-size: 0.8rem;
+}
+
+.search-form__input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  color: var(--clr-text-heading);
+  width: 100%;
+  min-width: 0;
+}
+
+.search-form__input::placeholder {
+  color: var(--clr-text-faint);
+  font-weight: 400;
+}
+
+/* Cross-browser date input styling */
+.search-form__input[type="date"] {
+  color-scheme: light;
+}
+
+/* Dropdown arrow normalisation */
+.search-form__input[type="date"]::-webkit-calendar-picker-indicator,
+select.search-form__input {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+/* Search button — fills the last grid cell */
+.search-form__btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-8);
+  background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-primary-dark) 100%);
+  color: var(--clr-white);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter var(--ease-base), letter-spacing var(--ease-base);
+  min-height: 72px;
+}
+
+.search-form__btn:hover {
+  filter: brightness(1.1);
+  letter-spacing: 0.04em;
+}
+
+.search-form__btn i {
+  font-size: var(--fs-lg);
+}
+
+
+/* ================================================================
+   08. SECTION HEADER
+   ----------------------------------------------------------------
+   Shared pattern used by every content section.
+   eyebrow → title → subtitle structure.
+================================================================ */
+
+.section-header {
+  text-align: center;
+  margin-bottom: var(--sp-12);
+}
+
+.section-header__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--clr-primary);
+  margin-bottom: var(--sp-3);
+}
+
+/* Decorative lines flanking the eyebrow text */
+.section-header__eyebrow::before,
+.section-header__eyebrow::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: var(--clr-primary);
+  border-radius: var(--radius-full);
+  opacity: 0.5;
+}
+
+.section-header__title {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  color: var(--clr-text-heading);
+  line-height: 1.2;
+  margin-bottom: var(--sp-4);
+}
+
+.section-header__subtitle {
+  font-size: var(--fs-md);
+  color: var(--clr-text-muted);
+  max-width: 520px;
+  margin-inline: auto;
+  line-height: 1.75;
+}
+
+
+/* ================================================================
+   09. DESTINATION CARDS
+   ----------------------------------------------------------------
+   CONCEPT: CSS Grid for equal-width cards
+   -----------------------------------------------
+   grid-template-columns: repeat(3, 1fr)
+   → 3 equal columns. Adding a card simply wraps to the next row.
+
+   CONCEPT: CSS clip-path / overflow:hidden + transform
+   -----------------------------------------------
+   We use overflow:hidden on the card so the zoomed image
+   (transform: scale(1.08)) doesn't bleed outside the rounded
+   corners. This is the standard "Ken Burns" zoom pattern.
+
+   CONCEPT: CSS inset shorthand
+   -----------------------------------------------
+   inset: 0  is shorthand for top:0; right:0; bottom:0; left:0.
+   Used to make overlays fill their parent completely.
+================================================================ */
+
+.destinations {
+  padding: var(--sp-24) var(--sp-6);
+  background-color: var(--clr-bg);
+}
+
+.destinations__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-5);
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+/* ---- DESTINATION CARD ---- */
+.destination-card {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;          /* Clips the zoomed background */
+  cursor: pointer;
+  height: 300px;
+  transition: transform var(--ease-base), box-shadow var(--ease-base);
+}
+
+.destination-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Background image — set via inline style by JS */
+.destination-card__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform var(--ease-slow);   /* Slow zoom looks lush */
+}
+
+.destination-card:hover .destination-card__bg {
+  transform: scale(1.08);
+}
+
+/* Dark gradient overlay — readable text over any image */
+.destination-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.03)  0%,
+    rgba(0,0,0,0.18) 40%,
+    rgba(0,0,0,0.72) 100%
+  );
+  transition: background var(--ease-base);
+}
+
+.destination-card:hover .destination-card__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(8,20,55,0.10)  0%,
+    rgba(26,115,232,0.35) 50%,
+    rgba(8,20,55,0.80)  100%
+  );
+}
+
+/* Text sits at the bottom of the card */
+.destination-card__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--sp-6);
+  color: var(--clr-white);
+}
+
+/* Pill showing hotel count */
+.destination-card__count {
+  display: inline-block;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  background-color: rgba(255,255,255,0.2);
+  backdrop-filter: blur(6px);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  margin-bottom: var(--sp-3);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.destination-card__city {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  margin-bottom: var(--sp-1);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+
+.destination-card__tagline {
+  font-size: var(--fs-sm);
+  color: rgba(255,255,255,0.85);
+  margin-bottom: var(--sp-3);
+}
+
+/* "Explore →" link — hidden until hover */
+.destination-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--clr-secondary);
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity   var(--ease-base),
+    transform var(--ease-base);
+}
+
+.destination-card:hover .destination-card__link {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ================================================================
+   10. HOTEL CARDS
+   ----------------------------------------------------------------
+   CONCEPT: Flexbox inside a card (column direction)
+   -----------------------------------------------
+   The card is a flex container (flex-direction: column).
+   The body section uses flex: 1 to grow and push the footer
+   to the bottom — this is how we make all cards equal height
+   with the price/button always aligned at the bottom.
+
+   CONCEPT: object-fit: cover
+   -----------------------------------------------
+   object-fit: cover makes an <img> fill its container like a
+   background-size: cover would. The image is cropped to fit
+   without distortion.
+================================================================ */
+
+.featured-hotels {
+  padding: var(--sp-24) var(--sp-6);
+  background-color: var(--clr-white);
+}
+
+.hotels__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-6);
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+/* ---- HOTEL CARD ---- */
+.hotel-card {
+  background-color: var(--clr-surface);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-sm);
+
+  /* Column flex: image → body → footer stacked vertically */
+  display: flex;
+  flex-direction: column;
+
+  transition: transform var(--ease-base), box-shadow var(--ease-base);
+}
+
+.hotel-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Image wrapper: fixed height, clips zoom overflow */
+.hotel-card__image-wrap {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hotel-card__image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* Fill without distortion */
+  transition: transform var(--ease-slow);
+}
+
+.hotel-card:hover .hotel-card__image-wrap img {
+  transform: scale(1.07);
+}
+
+/* Badge overlay — "Featured", "Best Value", etc. */
+.hotel-card__badge {
+  position: absolute;
+  top: var(--sp-3);
+  left: var(--sp-3);
+  z-index: 1;
+}
+
+/* Wishlist heart button — top right of image */
+.hotel-card__wishlist {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: var(--clr-text-muted);
+  font-size: var(--fs-base);
+  transition:
+    color         var(--ease-fast),
+    transform     var(--ease-fast),
+    background-color var(--ease-fast);
+  box-shadow: var(--shadow-xs);
+}
+
+.hotel-card__wishlist:hover,
+.hotel-card__wishlist.is-liked {
+  color: var(--clr-danger);
+  transform: scale(1.15);
+  background-color: var(--clr-white);
+}
+
+/* Card body — grows to fill space */
+.hotel-card__body {
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  flex: 1;   /* Takes all available vertical space */
+}
+
+/* City / location label */
+.hotel-card__location {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-primary);
+}
+
+.hotel-card__name {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--clr-text-heading);
+  line-height: 1.3;
+}
+
+/* Amenities row */
+.hotel-card__amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.hotel-card__amenity {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+}
+
+.hotel-card__amenity i {
+  color: var(--clr-primary);
+  font-size: 0.7rem;
+}
+
+/* Rating row */
+.hotel-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+  flex-wrap: wrap;
+}
+
+.hotel-card__rating-score {
+  font-weight: 700;
+  color: var(--clr-text-heading);
+}
+
+.hotel-card__rating-label {
+  color: var(--clr-text-muted);
+}
+
+/* Card footer: price left, button right */
+.hotel-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--clr-border);
+  margin-top: auto;
+  background-color: rgba(248,249,252,0.5);
+}
+
+.hotel-card__price-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.hotel-card__price {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  color: var(--clr-text-heading);
+  line-height: 1;
+}
+
+.hotel-card__price-sub {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  margin-top: 2px;
+}
+
+/* In-card CTA */
+.hotel-card__btn {
+  padding: var(--sp-2) var(--sp-5);
+  background-color: var(--clr-primary);
+  color: var(--clr-white);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border: 2px solid var(--clr-primary);
+  transition:
+    background-color var(--ease-base),
+    transform        var(--ease-fast);
+}
+
+.hotel-card__btn:hover {
+  background-color: var(--clr-primary-dark);
+  border-color: var(--clr-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* "View All" CTA below the grid */
+.featured-hotels__cta {
+  text-align: center;
+  margin-top: var(--sp-12);
+}
+
+
+/* ================================================================
+   11. WHY CHOOSE US
+   ----------------------------------------------------------------
+   CONCEPT: CSS Grid — repeat(4, 1fr)
+   -----------------------------------------------
+   Four equal columns. The grid auto-wraps to fewer columns via
+   media queries below. Hover effect rotates the icon slightly
+   for a playful feel — purely CSS, no JS needed.
+================================================================ */
+
+.why-us {
+  padding: var(--sp-24) var(--sp-6);
+  background: linear-gradient(180deg, var(--clr-bg) 0%, var(--clr-white) 100%);
+}
+
+.why-us__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-6);
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+.why-us__card {
+  background-color: var(--clr-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-8) var(--sp-6);
+  text-align: center;
+  border: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform     var(--ease-base),
+    box-shadow    var(--ease-base),
+    border-color  var(--ease-base);
+}
+
+.why-us__card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--clr-primary-light);
+}
+
+/* Circular icon container */
+.why-us__icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--clr-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  margin-bottom: var(--sp-5);
+  font-size: var(--fs-2xl);
+  color: var(--clr-primary);
+  transition:
+    background-color var(--ease-base),
+    color            var(--ease-base),
+    transform        var(--ease-base);
+}
+
+/* Icon fills and rotates on hover */
+.why-us__card:hover .why-us__icon {
+  background-color: var(--clr-primary);
+  color: var(--clr-white);
+  transform: rotate(-8deg) scale(1.1);
+}
+
+.why-us__card-title {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--clr-text-heading);
+  margin-bottom: var(--sp-3);
+}
+
+.why-us__card-text {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  line-height: 1.75;
+}
+
+
+/* ================================================================
+   12. NEWSLETTER / CTA SECTION
+================================================================ */
+
+.newsletter {
+  position: relative;
+  padding: var(--sp-20) var(--sp-6);
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f2878 0%, var(--clr-primary) 50%, #0e8a6e 100%);
+}
+
+/* Subtle dot grid overlay */
+.newsletter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Glowing blob */
+.newsletter::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%);
+  top: -200px;
+  right: -150px;
+  pointer-events: none;
+}
+
+.newsletter__content {
+  position: relative;
+  z-index: 1;
+  max-width: 580px;
+  margin-inline: auto;
+}
+
+.newsletter__title {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-3xl);
+  color: var(--clr-white);
+  margin-bottom: var(--sp-4);
+}
+
+.newsletter__subtitle {
+  font-size: var(--fs-md);
+  color: rgba(255,255,255,0.82);
+  margin-bottom: var(--sp-8);
+}
+
+.newsletter__form {
+  display: flex;
+  gap: var(--sp-3);
+  max-width: 460px;
+  margin-inline: auto;
+}
+
+.newsletter__input {
+  flex: 1;
+  padding: 0.8rem var(--sp-5);
+  border-radius: var(--radius-full);
+  border: 2px solid rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.14);
+  color: var(--clr-white);
+  font-size: var(--fs-base);
+  outline: none;
+  backdrop-filter: blur(8px);
+  transition: border-color var(--ease-base), background-color var(--ease-base);
+}
+
+.newsletter__input::placeholder { color: rgba(255,255,255,0.55); }
+
+.newsletter__input:focus {
+  border-color: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.22);
+}
+
+.newsletter__message {
+  min-height: 1.5em;
+  margin-top: var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+}
+
+.newsletter__message--success { color: #9ef7bc; }
+.newsletter__message--error   { color: #fea8a8; }
+
+
+/* ================================================================
+   13. FOOTER
+   ----------------------------------------------------------------
+   CONCEPT: CSS Grid for multi-column layouts
+   -----------------------------------------------
+   grid-template-columns: 1.6fr 1fr 1fr 1.2fr
+   The first column (brand) and last column (contact) are slightly
+   wider than the two middle columns (nav links).
+
+   The fr unit means "fraction of available space". So 1.6fr
+   gets 1.6x more space than a 1fr column.
+================================================================ */
+
+.footer {
+  background-color: #0a0f1e;
+  color: rgba(255,255,255,0.7);
+  padding-top: var(--sp-16);
+}
+
+.footer__container {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: var(--sp-12);
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--sp-6);
+  padding-bottom: var(--sp-12);
+}
+
+.footer__logo {
+  color: var(--clr-white);
+  font-size: var(--fs-xl);
+  margin-bottom: var(--sp-4);
+  display: inline-flex;
+}
+
+.footer__tagline {
+  font-size: var(--fs-sm);
+  line-height: 1.75;
+  color: rgba(255,255,255,0.55);
+  max-width: 250px;
+  margin-bottom: var(--sp-6);
+}
+
+/* Social icons */
+.footer__socials {
+  display: flex;
+  gap: var(--sp-3);
+}
+
+.footer__social-link {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.65);
+  font-size: var(--fs-sm);
+  transition:
+    background-color var(--ease-base),
+    border-color     var(--ease-base),
+    color            var(--ease-fast),
+    transform        var(--ease-fast);
+}
+
+.footer__social-link:hover {
+  background-color: var(--clr-primary);
+  border-color: var(--clr-primary);
+  color: var(--clr-white);
+  transform: translateY(-3px);
+}
+
+.footer__nav-title {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--clr-white);
+  margin-bottom: var(--sp-5);
+}
+
+.footer__nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.footer__nav-link {
+  font-size: var(--fs-sm);
+  color: rgba(255,255,255,0.58);
+  transition: color var(--ease-fast), padding-left var(--ease-fast);
+}
+
+.footer__nav-link:hover {
+  color: var(--clr-white);
+  padding-left: var(--sp-2);
+}
+
+/* Contact list */
+.footer__contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.footer__contact-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+  color: rgba(255,255,255,0.58);
+}
+
+.footer__contact-list i {
+  color: var(--clr-primary);
+  margin-top: 3px;
+  flex-shrink: 0;
+  width: 14px;
+}
+
+/* Footer bottom bar */
+.footer__bottom {
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: var(--sp-5) var(--sp-6);
+  max-width: var(--max-width);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+  color: rgba(255,255,255,0.38);
+}
+
+
+/* ================================================================
+   14. SCROLL-TO-TOP BUTTON
+   ----------------------------------------------------------------
+   Stays fixed at the bottom-right of the viewport.
+   JS adds .is-visible after the user scrolls 400px down.
+================================================================ */
+
+.scroll-top {
+  position: fixed;
+  bottom: var(--sp-8);
+  right: var(--sp-8);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+  color: var(--clr-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-lg);
+  box-shadow: var(--shadow-md);
+  border: none;
+  z-index: 999;
+  cursor: pointer;
+
+  /* Hidden state */
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition:
+    opacity   var(--ease-base),
+    transform var(--ease-base),
+    background-color var(--ease-fast);
+}
+
+.scroll-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.scroll-top:hover {
+  filter: brightness(1.12);
+  transform: translateY(-3px);
+}
+
+
+/* ================================================================
+   15. TOAST NOTIFICATION
+   ----------------------------------------------------------------
+   A small pop-up that slides up from the bottom.
+   JS adds .is-visible to show it, then removes it after 3s.
+================================================================ */
+
+.toast {
+  position: fixed;
+  bottom: var(--sp-10);
+  left: 50%;
+  transform: translateX(-50%) translateY(24px);
+  padding: var(--sp-4) var(--sp-6);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  background-color: var(--clr-text-heading);
+  color: var(--clr-white);
+  box-shadow: var(--shadow-xl);
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    transform var(--ease-base),
+    opacity   var(--ease-base);
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast--success { background-color: var(--clr-success); }
+.toast--error   { background-color: var(--clr-danger);  }
+
+
+/* ================================================================
+   16. ANIMATIONS & SCROLL REVEAL
+   ----------------------------------------------------------------
+   CONCEPT: Intersection Observer + CSS transitions
+   -----------------------------------------------
+   Elements start with opacity:0 and translateY(30px).
+   When JS detects them entering the viewport (via
+   IntersectionObserver), it adds .is-visible.
+   CSS transitions animate them to their final state.
+
+   This is more performant than animating on scroll events
+   because IntersectionObserver is non-blocking.
+================================================================ */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity   0.55s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delay helpers — add to child elements */
+.delay-1 { transition-delay: 0.08s; }
+.delay-2 { transition-delay: 0.16s; }
+.delay-3 { transition-delay: 0.24s; }
+.delay-4 { transition-delay: 0.32s; }
+
+/* Skeleton loading shimmer (used while JS loads card data) */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--clr-border) 25%,
+    #f0f4f8         50%,
+    var(--clr-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+
+/* ================================================================
+   17. MEDIA QUERIES — COMPLETE RESPONSIVE SYSTEM
+   ----------------------------------------------------------------
+   CONCEPT: What is a media query?
+   ─────────────────────────────────────────────────────────────
+   A media query is a CSS "if statement". It says:
+   "Only apply these rules IF the screen width is ≤ X pixels."
+
+     @media (max-width: 768px) {
+       /* These rules only apply when screen width ≤ 768px */
+       .navbar__links { display: none; }
+     }
+
+   We use "max-width" (desktop-first approach):
+   → Start with desktop styles at the top of the file
+   → Override them with smaller-screen styles in media queries below
+   → The browser reads CSS top-to-bottom, so later rules win
+
+   BREAKPOINTS USED:
+   ─────────────────
+   1440px → Large desktop (wide monitors, check nothing breaks)
+   1024px → Tablet landscape (iPad, small laptops)
+    768px → Tablet portrait / large mobile
+    425px → Mobile phones (iPhone 14, Pixel 7)
+    375px → Small phones (iPhone SE, Galaxy A)
+    320px → Very small phones (old iPhones)
+
+   CONCEPT: Why overflow-x: hidden on body?
+   ─────────────────────────────────────────
+   Any element wider than the viewport causes horizontal scroll.
+   We set overflow-x: hidden on body to prevent this globally.
+   Then fix the individual elements causing the overflow.
+
+   CONCEPT: rem vs px for media queries
+   ─────────────────────────────────────
+   We use px in media queries for clarity and consistency.
+   CSS variables don't work inside media query conditions —
+   you can't write @media (max-width: var(--breakpoint)).
+================================================================ */
+
+
+/* ============================================================
+   ≤ 1440px — LARGE DESKTOP
+   ─────────────────────────────────────────────────────────
+   Most content is fine. Just ensure max-widths are respected
+   and the hero doesn't become too tall on wide screens.
+============================================================ */
+@media (max-width: 1440px) {
+
+  /* Constrain the hero content so it doesn't spread too wide */
+  .hero__content {
+    max-width: 860px;
+  }
+
+  /* Slightly reduce hero heading on very wide screens */
+  .hero__heading {
+    font-size: var(--fs-4xl);
+  }
+}
+
+
+/* ============================================================
+   ≤ 1024px — TABLET LANDSCAPE
+   ─────────────────────────────────────────────────────────
+   Grids shift from 3–4 columns → 2 columns.
+   Search form reflows to 2-column layout.
+   Navbar stays horizontal — hamburger not yet needed.
+============================================================ */
+@media (max-width: 1024px) {
+
+  /* ── Typography scale down ── */
+  :root {
+    --fs-5xl: 3rem;
+    --fs-4xl: 2.5rem;
+    --fs-3xl: 2rem;
+  }
+
+  /* ── Navbar: reduce padding so links don't crowd ── */
+  .navbar {
+    padding-inline: var(--sp-5);
+  }
+
+  /* ── Search form: 2 columns (destination + checkin / checkout + guests) ──
+     CONCEPT: grid-template-columns
+     ─────────────────────────────────────────────────────
+     repeat(2, 1fr) = two equal columns.
+     The search button spans across all columns with grid-column: 1 / -1
+     (1 / -1 means "from column line 1 to the last column line").
+  ── */
+  .search-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-form__btn {
+    grid-column: 1 / -1;   /* span ALL columns → full width */
+    justify-content: center;
+    min-height: 60px;
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  }
+
+  /* ── Content grids: 3 cols → 2 cols ── */
+  .destinations__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hotels__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .why-us__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* ── Footer: 4 cols → 2 cols ── */
+  .footer__container {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8);
+  }
+
+  /* ── Hero section: reduce padding ── */
+  .hero {
+    padding: var(--sp-16) var(--sp-6);
+  }
+}
+
+
+/* ============================================================
+   ≤ 768px — TABLET PORTRAIT / LARGE MOBILE
+   ─────────────────────────────────────────────────────────
+   This is the most important breakpoint. The hamburger menu
+   appears and most layouts become single-column.
+============================================================ */
+@media (max-width: 768px) {
+
+  /* ── Typography ── */
+  :root {
+    --fs-5xl: 2.5rem;
+    --fs-4xl: 2rem;
+    --fs-3xl: 1.75rem;
+  }
+
+  /* ── Navbar: show hamburger, hide desktop links ──
+     CONCEPT: display: none vs display: flex
+     ─────────────────────────────────────────────────────
+     display: none  → removes element from layout completely
+     display: flex  → shows it as a flex container
+
+     We HIDE the desktop links and SHOW the hamburger button.
+     JavaScript toggles the .is-open class to slide the menu open.
+  ── */
+  .navbar {
+    padding-inline: var(--sp-4);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  /* Show the hamburger icon on mobile */
+  .navbar__hamburger {
+    display: flex;
+  }
+
+  /*
+    CONCEPT: Mobile nav slide-down animation
+    ─────────────────────────────────────────────────────
+    max-height: 0 + overflow: hidden = visually hidden
+    max-height: 420px = fully open
+
+    We animate max-height instead of display because:
+    display cannot be transitioned (it jumps instantly).
+    max-height can be transitioned (it animates smoothly).
+
+    The JS adds/removes .is-open to trigger this.
+  */
+  .navbar__links {
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: var(--clr-white);
+    border-bottom: 1px solid var(--clr-border);
+    box-shadow: var(--shadow-lg);
+    padding-inline: var(--sp-4);
+    gap: var(--sp-1);
+    /* Hidden state */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--ease-slow), padding var(--ease-slow);
+  }
+
+  /* Open state — JS adds this class */
+  .navbar__links.is-open {
+    max-height: 500px;   /* large enough for all links */
+    padding-block: var(--sp-4);
+  }
+
+  .navbar__link {
+    width: 100%;
+    padding: var(--sp-3) var(--sp-4);
+    font-size: var(--fs-base);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Active underline looks odd in vertical layout — remove */
+  .navbar__link.active::after { display: none; }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: auto;
+    padding: var(--sp-16) var(--sp-4) var(--sp-12);
+    background-attachment: scroll;  /* fixed is janky on mobile */
+  }
+
+  .hero__heading    { font-size: var(--fs-3xl); }
+  .hero__subtext    { font-size: var(--fs-base); }
+
+  .hero__trust {
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* ── Search form: full single-column stack ──
+     CONCEPT: grid-template-columns: 1fr
+     → one column that fills all available width.
+     Each field, label, input stacks on top of each other.
+  ── */
+  .search-form {
+    grid-template-columns: 1fr;
+    border-radius: var(--radius-lg);
+  }
+
+  .search-form__group {
+    border-right: none;
+    border-bottom: 1px solid var(--clr-border);
+  }
+
+  .search-form__btn {
+    grid-column: 1;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: var(--sp-4);
+    min-height: 56px;
+    font-size: var(--fs-base);
+  }
+
+  /* ── Section headers ── */
+  .section-header {
+    margin-bottom: var(--sp-8);
+  }
+
+  .section-header__title    { font-size: var(--fs-2xl); }
+  .section-header__subtitle { font-size: var(--fs-base); }
+
+  /* ── Destinations grid: 1 column ── */
+  .destinations {
+    padding: var(--sp-16) var(--sp-4);
+  }
+
+  .destinations__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .destination-card { height: 220px; }
+
+  /* ── Hotels grid: 1 column ── */
+  .featured-hotels {
+    padding: var(--sp-16) var(--sp-4);
+  }
+
+  .hotels__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Why us: 1 column ── */
+  .why-us {
+    padding: var(--sp-16) var(--sp-4);
+  }
+
+  .why-us__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Newsletter ── */
+  .newsletter {
+    padding: var(--sp-16) var(--sp-4);
+  }
+
+  .newsletter__form {
+    flex-direction: column;   /* input stacks above button */
+  }
+
+  .newsletter__input {
+    width: 100%;
+  }
+
+  /* ── Footer: single column ── */
+  .footer__container {
+    grid-template-columns: 1fr;
+    gap: var(--sp-8);
+    padding-inline: var(--sp-4);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--sp-2);
+    padding-inline: var(--sp-4);
+  }
+
+  /* ── Scroll-to-top: move away from screen edge ── */
+  .scroll-top {
+    bottom: var(--sp-5);
+    right: var(--sp-5);
+    width: 42px;
+    height: 42px;
+    font-size: var(--fs-base);
+  }
+}
+
+
+/* ============================================================
+   ≤ 425px — MOBILE PHONES
+   ─────────────────────────────────────────────────────────
+   Standard mobile size (iPhone 14, Pixel 7).
+   Tighten spacing, ensure buttons are touch-friendly (≥44px).
+============================================================ */
+@media (max-width: 425px) {
+
+  /* ── Typography ── */
+  :root {
+    --fs-5xl: 2rem;
+    --fs-4xl: 1.875rem;
+    --fs-3xl: 1.5rem;
+    --fs-2xl: 1.625rem;
+  }
+
+  /* ── Navbar ── */
+  .navbar {
+    padding-inline: var(--sp-3);
+  }
+
+  .navbar__logo {
+    font-size: var(--fs-lg);
+  }
+
+  .navbar__logo i {
+    font-size: var(--fs-lg);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: var(--sp-12) var(--sp-3) var(--sp-10);
+  }
+
+  .hero__eyebrow {
+    font-size: 0.65rem;
+    padding: var(--sp-1) var(--sp-3);
+  }
+
+  .hero__heading { font-size: 1.875rem; }
+  .hero__subtext { font-size: var(--fs-sm); }
+
+  /* Trust row — hide 3rd and 4th items on small phones */
+  .hero__trust-item:nth-child(n+3) {
+    display: none;
+  }
+
+  /* ── Search form ── */
+  .search-form__label {
+    font-size: 0.6rem;
+  }
+
+  .search-form__input {
+    font-size: var(--fs-sm);
+  }
+
+  /* ── Hotel cards: ensure image doesn't overflow ── */
+  .hotel-card__image-wrap {
+    height: 190px;
+  }
+
+  .hotel-card__body {
+    padding: var(--sp-4);
+  }
+
+  .hotel-card__footer {
+    padding: var(--sp-3) var(--sp-4);
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  /* ── Hotel card buttons: full width on tiny screens ── */
+  .hotel-card__btn {
+    width: 100%;
+    justify-content: center;
+    padding: var(--sp-3);
+    min-height: 44px;   /* WCAG touch target minimum */
+  }
+
+  /* ── Why-us cards ── */
+  .why-us__card {
+    padding: var(--sp-6) var(--sp-4);
+  }
+
+  .why-us__icon {
+    width: 64px;
+    height: 64px;
+    font-size: var(--fs-xl);
+  }
+
+  /* ── Section headers ── */
+  .section-header__eyebrow::before,
+  .section-header__eyebrow::after {
+    display: none;   /* decorative lines look cramped */
+  }
+
+  /* ── Destination cards ── */
+  .destination-card { height: 200px; }
+
+  .destination-card__city {
+    font-size: var(--fs-xl);
+  }
+
+  /* ── Newsletter ── */
+  .newsletter__title { font-size: var(--fs-2xl); }
+
+  .newsletter__input {
+    padding: var(--sp-3) var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+
+  /* ── Buttons: ensure minimum 44px touch target ── */
+  .btn {
+    min-height: 44px;
+    padding: var(--sp-3) var(--sp-5);
+    font-size: var(--fs-sm);
+  }
+
+  .btn--lg {
+    min-height: 48px;
+  }
+
+  /* ── Footer ── */
+  .footer__tagline {
+    max-width: 100%;
+  }
+
+  .footer__socials {
+    gap: var(--sp-2);
+  }
+
+  .footer__social-link {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* ── Toast notification ── */
+  .toast {
+    width: calc(100% - var(--sp-8));
+    text-align: center;
+    white-space: normal;
+    font-size: var(--fs-xs);
+  }
+
+  /* ── Fade-up stagger: reduce on mobile (too slow) ── */
+  .delay-4 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.15s; }
+}
+
+
+/* ============================================================
+   ≤ 375px — SMALL PHONES (iPhone SE, Galaxy A)
+   ─────────────────────────────────────────────────────────
+   Very tight layout. Keep everything functional and readable.
+   All interactive elements stay ≥ 44px (WCAG 2.5.5).
+============================================================ */
+@media (max-width: 375px) {
+
+  :root {
+    --fs-5xl: 1.75rem;
+    --fs-4xl: 1.5rem;
+    --fs-3xl: 1.375rem;
+    --sp-6: 1.25rem;   /* reduce horizontal gaps */
+    --sp-8: 1.5rem;
+  }
+
+  /* ── Navbar ── */
+  .navbar {
+    padding-inline: var(--sp-2);
+    height: 62px;
+    --navbar-height: 62px;
+  }
+
+  .navbar__logo span {
+    font-size: var(--fs-base);
+  }
+
+  .navbar__hamburger {
+    width: 40px;
+    height: 40px;
+  }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: var(--fs-sm);
+  }
+
+  /* ── Hero: tighten up ── */
+  .hero {
+    padding: var(--sp-10) var(--sp-3) var(--sp-8);
+  }
+
+  .hero__heading {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .hero__trust { display: none; }   /* too cramped on very small screens */
+
+  /* ── Search form ── */
+  .search-form__group {
+    padding: var(--sp-3) var(--sp-4);
+  }
+
+  /* ── Section padding ── */
+  .destinations,
+  .featured-hotels,
+  .why-us,
+  .newsletter {
+    padding: var(--sp-12) var(--sp-3);
+  }
+
+  /* ── Cards: reduce internal padding ── */
+  .hotel-card__body    { padding: var(--sp-3); }
+  .hotel-card__footer  { padding: var(--sp-3); }
+  .why-us__card        { padding: var(--sp-5) var(--sp-3); }
+
+  /* ── Footer ── */
+  .footer__container {
+    padding-inline: var(--sp-3);
+    gap: var(--sp-6);
+  }
+
+  .footer__bottom {
+    padding: var(--sp-4) var(--sp-3);
+    font-size: 0.65rem;
+  }
+
+  /* ── Scroll-to-top: move closer to edges ── */
+  .scroll-top {
+    bottom: var(--sp-4);
+    right: var(--sp-3);
+    width: 38px;
+    height: 38px;
+  }
+}
+
+
+/* ============================================================
+   ≤ 320px — VERY SMALL PHONES
+   ─────────────────────────────────────────────────────────
+   Oldest and smallest devices. Absolute minimum viable layout.
+   Everything stacks. Nothing overflows.
+============================================================ */
+@media (max-width: 320px) {
+
+  :root {
+    --fs-5xl: 1.5rem;
+    --fs-4xl: 1.375rem;
+    --fs-3xl: 1.25rem;
+    --fs-2xl: 1.125rem;
+    --sp-6: 1rem;
+    --sp-8: 1.25rem;
+  }
+
+  /* ── Navbar: keep logo visible ── */
+  .navbar__logo span {
+    /* Hide text, show only icon on tiniest screens */
+    display: none;
+  }
+
+  /* ── Hero heading: prevent overflow ── */
+  .hero__heading {
+    font-size: 1.375rem;
+    word-break: break-word;
+  }
+
+  /* ── Buttons: full width on tiny screens ── */
+  .confirm-actions .btn,
+  .no-booking .btn,
+  .wishlist-empty .btn,
+  .bookings-empty .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── Hotel card image: shorter height ── */
+  .hotel-card__image-wrap {
+    height: 160px;
+  }
+
+  /* ── Why-us: icon size ── */
+  .why-us__icon {
+    width: 56px;
+    height: 56px;
+    font-size: var(--fs-lg);
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE IMAGES — global rules
+   ─────────────────────────────────────────────────────────
+   CONCEPT: Fluid images
+   All images get max-width: 100% so they never overflow
+   their container. height: auto preserves the aspect ratio.
+   object-fit: cover is set on specific containers.
+============================================================ */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Prevent SVGs and iframes from overflowing */
+svg,
+iframe,
+embed,
+video {
+  max-width: 100%;
+}
+
+
+/* ============================================================
+   RESPONSIVE FORMS — global rules
+   ─────────────────────────────────────────────────────────
+   Form elements need special attention on mobile:
+   - font-size ≥ 16px prevents iOS auto-zoom on focus
+   - min-height 44px ensures touch targets are large enough
+   - width: 100% makes inputs fill their container
+============================================================ */
+
+/* Prevent iOS Safari from zooming into inputs */
+@media (max-width: 768px) {
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;   /* iOS zooms in if < 16px */
+    min-height: 44px;              /* WCAG touch target */
+  }
+
+  /* Booking form: single column on mobile */
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Form inputs: full width */
+  .form-input {
+    width: 100%;
+  }
+
+  /* Booking submit button: full width */
+  .booking-submit-btn {
+    width: 100%;
+    padding: var(--sp-4);
+    font-size: var(--fs-base);
+    min-height: 52px;
+  }
+
+  /* Booking layout: single column */
+  .booking-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Summary sidebar: move above form on mobile */
+  .booking-summary {
+    order: -1;
+    position: static;
+  }
+
+  /* Hotel layout on hotels page */
+  .hotels-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hotels list cards: stack vertically */
+  .hotels-grid .hotel-card {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  .hotels-grid .hotel-card__image-wrap {
+    width: 100% !important;
+    height: 200px !important;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE NAVIGATION — hamburger menu transitions
+   ─────────────────────────────────────────────────────────
+   The navbar stays sticky on ALL screen sizes.
+   The background adjusts for dark mode automatically via
+   CSS variables.
+============================================================ */
+
+/* Navbar stays readable at all widths */
+@media (max-width: 768px) {
+
+  /* The absolute-positioned mobile menu needs z-index
+     to appear above all page content */
+  .navbar__links {
+    z-index: 999;
+  }
+
+  /* Each mobile nav link: make it easy to tap */
+  .navbar__link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Wishlist badge inside nav link */
+  .wishlist-badge {
+    margin-left: auto;
+  }
+}
+
+
+/* ============================================================
+   NO HORIZONTAL SCROLL — safety rules
+   ─────────────────────────────────────────────────────────
+   These rules prevent any element from causing horizontal
+   overflow. The body rule is already in the base CSS but
+   we reinforce it here for all common containers.
+============================================================ */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+.container,
+.section-header,
+.destinations__grid,
+.hotels__grid,
+.why-us__grid,
+.footer__container,
+.booking-layout,
+.hotels-layout,
+.bookings-layout,
+.wishlist-layout,
+.wishlist-grid,
+.confirm-layout {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Prevent wide words from causing overflow */
+h1, h2, h3, h4, p, li, a {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+
+/* ============================================================
+   PRINT STYLES (shared across all pages)
+   ─────────────────────────────────────────────────────────
+   Clean print output: hide nav, footer, buttons.
+   The confirmation page has its own detailed print styles.
+============================================================ */
+@media print {
+  .navbar,
+  .footer,
+  .scroll-top,
+  .toast,
+  .theme-toggle,
+  .navbar__hamburger {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 11pt;
+  }
+
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  .hotel-card,
+  .booking-card,
+  .wishlist-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* end of style.css */
+
+
+/* ============================================================
+   ≤ 768px — TABLET PORTRAIT / MOBILE
+   Hamburger menu appears.
+   Everything becomes single-column.
+============================================================ */
+@media (max-width: 768px) {
+
+  :root {
+    --fs-5xl: 2.5rem;
+    --fs-4xl: 2rem;
+    --fs-3xl: 1.75rem;
+  }
+
+  .navbar {
+    padding-inline: var(--sp-4);
+  }
+
+  /* Show hamburger icon */
+  .navbar__hamburger {
+    display: flex;
+  }
+
+  /*
+    CONCEPT: Mobile nav slide-down
+    -----------------------------------------------
+    The <ul> is taken out of normal flow with position:absolute
+    and sits directly below the navbar.
+    max-height: 0 + overflow: hidden hides it.
+    When JS adds .is-open → max-height grows → content slides in.
+    We animate max-height instead of display:none because
+    display cannot be transitioned.
+  */
+  .navbar__links {
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: var(--clr-white);
+    border-bottom: 1px solid var(--clr-border);
+    box-shadow: var(--shadow-lg);
+    padding-inline: var(--sp-4);
+    gap: var(--sp-1);
+
+    /* Hidden state */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--ease-slow), padding var(--ease-slow);
+  }
+
+  .navbar__links.is-open {
+    max-height: 420px;
+    padding-block: var(--sp-4);
+  }
+
+  .navbar__link {
+    width: 100%;
+    padding: var(--sp-3) var(--sp-4);
+    font-size: var(--fs-base);
+  }
+
+  /* Active underline doesn't work well in vertical layout */
+  .navbar__link.active::after { display: none; }
+
+  /* Hero */
+  .hero {
+    min-height: auto;
+    padding: var(--sp-16) var(--sp-4) var(--sp-12);
+  }
+
+  .hero__subtext { font-size: var(--fs-base); }
+
+  .hero__trust {
+    gap: var(--sp-4);
+  }
+
+  /* Search form: full stack */
+  .search-form {
+    grid-template-columns: 1fr;
+    border-radius: var(--radius-lg);
+  }
+
+  .search-form__group {
+    border-right: none;
+    border-bottom: 1px solid var(--clr-border);
+  }
+
+  .search-form__btn {
+    grid-column: 1;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: var(--sp-4);
+    min-height: 56px;
+  }
+
+  /* Single-column destinations */
+  .destinations__grid { grid-template-columns: 1fr; }
+  .destination-card   { height: 240px; }
+
+  /* Single-column hotels */
+  .hotels__grid { grid-template-columns: 1fr; }
+
+  /* 2-col why-us on tablet, already set above */
+
+  /* Newsletter */
+  .newsletter__form {
+    flex-direction: column;
+  }
+
+  /* Footer: single column */
+  .footer__container {
+    grid-template-columns: 1fr;
+    gap: var(--sp-8);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--sp-2);
+  }
+
+  .scroll-top {
+    bottom: var(--sp-5);
+    right: var(--sp-5);
+    width: 42px;
+    height: 42px;
+  }
+}
+
+
+/* ============================================================
+   ≤ 480px — LARGE MOBILE PHONES
+============================================================ */
+@media (max-width: 480px) {
+
+  :root {
+    --fs-5xl: 2rem;
+    --fs-4xl: 1.75rem;
+    --fs-3xl: 1.5rem;
+  }
+
+  /* 1-column for all grids (already set, but explicit here) */
+  .why-us__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header__eyebrow::before,
+  .section-header__eyebrow::after {
+    display: none;   /* Decorative lines look cramped on very small screens */
+  }
+
+  .hero__trust-item:nth-child(n+3) {
+    display: none;   /* Show only 2 trust items on small phones */
+  }
+}
+
+
+/* ============================================================
+   ≤ 360px — SMALL PHONES (e.g. Galaxy A01)
+============================================================ */
+@media (max-width: 360px) {
+
+  :root {
+    --fs-5xl: 1.75rem;
+    --fs-4xl: 1.5rem;
+  }
+
+  .navbar {
+    padding-inline: var(--sp-3);
+  }
+
+  .navbar__logo {
+    font-size: var(--fs-lg);
+  }
+
+  .hero__eyebrow {
+    font-size: 0.65rem;
+  }
+}
+
+
+/* ================================================================
+   ADVANCED FEATURES — styles for js/features.js
+   ─────────────────────────────────────────────────────────────
+   01. Page Loading Animation
+   02. Toast Notification (enhanced)
+   03. Smooth Scrolling
+   04. Image Hover Effects
+   05. Hotel Image Slider
+   06. Search Suggestions Dropdown
+   07. Filter Count Badge
+   08. Empty State Messages
+   09. Form Success Animation
+   10. Back-to-Top Button (enhanced)
+   11. Scroll Animations (enhanced)
+   12. Responsive Mobile Menu (enhanced)
+================================================================ */
+
+
+/* ================================================================
+   01. PAGE LOADING ANIMATION
+   ─────────────────────────────────────────────────────────────
+   A full-screen overlay with a spinner that hides once the
+   page has fully loaded. Prevents the user seeing a half-loaded
+   page on slow connections.
+================================================================ */
+.page-loader {
+  position: fixed;
+  inset: 0;                          /* top/right/bottom/left: 0 */
+  background: var(--clr-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  gap: var(--sp-5);
+
+  /* Starts fully visible */
+  opacity: 1;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Hidden state — JS adds this after page loads */
+.page-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Spinning ring */
+.page-loader__spinner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 4px solid var(--clr-border);
+  border-top-color: var(--clr-primary);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Brand text below spinner */
+.page-loader__text {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--clr-primary);
+  letter-spacing: 0.05em;
+}
+
+.page-loader__sub {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  margin-top: calc(-1 * var(--sp-3));
+}
+
+/* Progress bar at very top of loader */
+.page-loader__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--clr-primary), var(--clr-secondary));
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  animation: loadProgress 1.8s ease-in-out forwards;
+}
+
+@keyframes loadProgress {
+  from { width: 0%; }
+  60%  { width: 75%; }
+  to   { width: 100%; }
+}
+
+
+/* ================================================================
+   02. TOAST NOTIFICATIONS (enhanced multi-type system)
+   ─────────────────────────────────────────────────────────────
+   Stacking toasts that slide in from the bottom-right.
+   Types: success, error, warning, info
+================================================================ */
+.toast-container {
+  position: fixed;
+  bottom: var(--sp-8);
+  right: var(--sp-8);
+  display: flex;
+  flex-direction: column-reverse;  /* new toasts appear at bottom */
+  gap: var(--sp-3);
+  z-index: 9998;
+  pointer-events: none;
+  max-width: 340px;
+  width: calc(100vw - var(--sp-10));
+}
+
+.toast-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--clr-surface);
+  color: var(--clr-text-body);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--clr-border);
+  pointer-events: auto;
+  width: 100%;
+
+  /* Slide-in from right */
+  transform: translateX(110%);
+  opacity: 0;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity   0.35s ease;
+}
+
+.toast-item.is-visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Colour left-border by type */
+.toast-item--success { border-left: 4px solid var(--clr-success); }
+.toast-item--error   { border-left: 4px solid var(--clr-danger);  }
+.toast-item--warning { border-left: 4px solid var(--clr-secondary); }
+.toast-item--info    { border-left: 4px solid var(--clr-primary);  }
+
+/* Icon */
+.toast-item__icon {
+  font-size: var(--fs-lg);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.toast-item--success .toast-item__icon { color: var(--clr-success); }
+.toast-item--error   .toast-item__icon { color: var(--clr-danger);  }
+.toast-item--warning .toast-item__icon { color: var(--clr-secondary); }
+.toast-item--info    .toast-item__icon { color: var(--clr-primary);  }
+
+.toast-item__body    { flex: 1; min-width: 0; }
+.toast-item__title   { font-size: var(--fs-sm); font-weight: 700; color: var(--clr-text-heading); margin-bottom: 2px; }
+.toast-item__message { font-size: var(--fs-xs); color: var(--clr-text-muted); line-height: 1.5; }
+
+/* Close button */
+.toast-item__close {
+  background: none; border: none; cursor: pointer;
+  color: var(--clr-text-faint); font-size: var(--fs-base);
+  padding: 0; flex-shrink: 0; line-height: 1;
+  transition: color var(--ease-fast);
+}
+.toast-item__close:hover { color: var(--clr-text-body); }
+
+/* Progress bar draining at bottom */
+.toast-item__progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.3;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  animation: toastDrain linear forwards;
+}
+
+.toast-item { position: relative; overflow: hidden; }
+
+@keyframes toastDrain {
+  from { width: 100%; }
+  to   { width: 0%;   }
+}
+
+@media (max-width: 425px) {
+  .toast-container {
+    bottom: var(--sp-4);
+    right: var(--sp-3);
+    left: var(--sp-3);
+    max-width: 100%;
+    width: auto;
+  }
+}
+
+
+/* ================================================================
+   04. IMAGE HOVER EFFECTS
+   ─────────────────────────────────────────────────────────────
+   Zoom, brightness lift, and caption reveal on image hover.
+================================================================ */
+.img-hover-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.img-hover-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter    0.5s ease;
+}
+
+.img-hover-wrap:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+/* Caption that slides up on hover */
+.img-hover-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: var(--sp-4) var(--sp-5);
+  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+  color: white;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transform: translateY(100%);
+  transition: transform 0.35s ease;
+}
+
+.img-hover-wrap:hover .img-hover-caption {
+  transform: translateY(0);
+}
+
+
+/* ================================================================
+   05. HOTEL IMAGE SLIDER
+   ─────────────────────────────────────────────────────────────
+   A lightweight CSS+JS carousel for hotel images.
+   No libraries needed.
+================================================================ */
+.img-slider {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--clr-border);
+}
+
+.img-slider__track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.img-slider__slide {
+  min-width: 100%;
+  height: 260px;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Prev / Next arrows */
+.img-slider__btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.88);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+  color: var(--clr-text-heading);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--ease-base), transform var(--ease-fast);
+  box-shadow: var(--shadow-md);
+}
+
+.img-slider:hover .img-slider__btn { opacity: 1; }
+
+.img-slider__btn--prev { left: var(--sp-3); }
+.img-slider__btn--next { right: var(--sp-3); }
+
+.img-slider__btn:hover {
+  background: var(--clr-white);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Dot indicators */
+.img-slider__dots {
+  position: absolute;
+  bottom: var(--sp-3);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.img-slider__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.55);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--ease-base), transform var(--ease-fast);
+}
+
+.img-slider__dot.is-active {
+  background: var(--clr-white);
+  transform: scale(1.3);
+}
+
+
+/* ================================================================
+   06. SEARCH SUGGESTIONS DROPDOWN
+================================================================ */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 500;
+  overflow: hidden;
+
+  /* Hidden by default */
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity var(--ease-base), transform var(--ease-base);
+}
+
+.search-suggestions.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.search-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  color: var(--clr-text-body);
+  transition: background-color var(--ease-fast);
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.search-suggestion-item:last-child { border-bottom: none; }
+
+.search-suggestion-item:hover,
+.search-suggestion-item.is-highlighted {
+  background-color: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+
+.search-suggestion-item i {
+  color: var(--clr-primary);
+  font-size: var(--fs-sm);
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.suggestion-match {
+  font-weight: 700;
+  color: var(--clr-primary);
+}
+
+.suggestion-meta {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  margin-left: auto;
+}
+
+
+/* ================================================================
+   07. FILTER COUNT BADGE
+================================================================ */
+.filter-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--sp-1);
+  border-radius: var(--radius-full);
+  background: var(--clr-primary);
+  color: white;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  margin-left: var(--sp-2);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity var(--ease-base), transform var(--ease-base);
+}
+
+.filter-count-badge.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+/* ================================================================
+   08. EMPTY STATE MESSAGES (enhanced)
+================================================================ */
+.empty-state {
+  text-align: center;
+  padding: var(--sp-20) var(--sp-6);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.empty-state__illustration {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--clr-bg);
+  border: 2px dashed var(--clr-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  margin-bottom: var(--sp-6);
+  font-size: 2.8rem;
+  color: var(--clr-text-faint);
+  animation: emptyBounce 2.5s ease-in-out infinite;
+}
+
+@keyframes emptyBounce {
+  0%,100% { transform: translateY(0);   }
+  50%      { transform: translateY(-8px); }
+}
+
+.empty-state__title {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-2xl);
+  color: var(--clr-text-heading);
+  margin-bottom: var(--sp-3);
+}
+
+.empty-state__text {
+  font-size: var(--fs-base);
+  color: var(--clr-text-muted);
+  max-width: 380px;
+  margin-inline: auto;
+  margin-bottom: var(--sp-8);
+  line-height: 1.75;
+}
+
+.empty-state__actions {
+  display: flex;
+  gap: var(--sp-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+/* ================================================================
+   09. FORM SUCCESS ANIMATION
+================================================================ */
+.form-success-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--clr-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  border-radius: var(--radius-xl);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.form-success-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Checkmark circle */
+.success-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--clr-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.form-success-overlay.is-visible .success-circle {
+  transform: scale(1);
+}
+
+.success-title {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-2xl);
+  color: var(--clr-success);
+  font-weight: 700;
+}
+
+.success-message {
+  font-size: var(--fs-base);
+  color: var(--clr-text-muted);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.7;
+}
+
+/* Input field shake animation on error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0);    }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px);  }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px);  }
+}
+
+.is-shaking { animation: shake 0.45s ease; }
+
+
+/* ================================================================
+   10. BACK-TO-TOP BUTTON (enhanced)
+   ─────────────────────────────────────────────────────────────
+   Shows a circular progress ring around the button that fills
+   as the user scrolls down the page.
+================================================================ */
+.back-to-top {
+  position: fixed;
+  bottom: var(--sp-8);
+  right: var(--sp-8);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--clr-surface);
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  color: var(--clr-primary);
+  font-size: var(--fs-base);
+
+  /* Hidden initially */
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  pointer-events: none;
+  transition: opacity var(--ease-base), transform var(--ease-base);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--clr-primary);
+  color: white;
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* SVG progress ring */
+.back-to-top__ring {
+  position: absolute;
+  inset: 0;
+  width: 52px;
+  height: 52px;
+  transform: rotate(-90deg);  /* start progress from top */
+}
+
+.back-to-top__ring-track {
+  fill: none;
+  stroke: var(--clr-border);
+  stroke-width: 3;
+}
+
+.back-to-top__ring-progress {
+  fill: none;
+  stroke: var(--clr-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 138;   /* circumference of r=22 circle ≈ 138 */
+  stroke-dashoffset: 138;  /* fully hidden at start */
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+@media (max-width: 425px) {
+  .back-to-top {
+    bottom: var(--sp-4);
+    right: var(--sp-3);
+    width: 44px;
+    height: 44px;
+  }
+  .back-to-top__ring { width: 44px; height: 44px; }
+}
+
+
+/* ================================================================
+   11. SCROLL ANIMATIONS
+   ─────────────────────────────────────────────────────────────
+   Elements start invisible and animate into view as they
+   enter the viewport (powered by IntersectionObserver in JS).
+   Multiple animation types available via data-animate attribute.
+================================================================ */
+
+/* Base hidden state for all animated elements */
+[data-animate] {
+  opacity: 0;
+  transition:
+    opacity   0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-animate].is-animated { opacity: 1; transform: none !important; }
+
+/* Animation variants */
+[data-animate="fade-up"]    { transform: translateY(40px); }
+[data-animate="fade-down"]  { transform: translateY(-40px); }
+[data-animate="fade-left"]  { transform: translateX(40px); }
+[data-animate="fade-right"] { transform: translateX(-40px); }
+[data-animate="zoom-in"]    { transform: scale(0.88); }
+[data-animate="zoom-out"]   { transform: scale(1.12); }
+[data-animate="flip-up"]    { transform: perspective(600px) rotateX(20deg); }
+
+/* Stagger delays for child elements */
+[data-animate-delay="100"] { transition-delay: 0.1s; }
+[data-animate-delay="200"] { transition-delay: 0.2s; }
+[data-animate-delay="300"] { transition-delay: 0.3s; }
+[data-animate-delay="400"] { transition-delay: 0.4s; }
+[data-animate-delay="500"] { transition-delay: 0.5s; }
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* ================================================================
+   12. RESPONSIVE MOBILE MENU (enhanced overlay)
+   ─────────────────────────────────────────────────────────────
+   When the hamburger is clicked, a semi-transparent overlay
+   appears behind the menu so tapping it closes it.
+================================================================ */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ease-base);
+}
+
+.nav-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Highlight the active nav link in mobile menu */
+@media (max-width: 768px) {
+  .navbar__link.active {
+    background-color: var(--clr-primary-light);
+    color: var(--clr-primary);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Add a right arrow to each mobile link */
+  .navbar__link::after {
+    content: '';  /* reset the desktop underline pseudo-element */
+  }
+}
