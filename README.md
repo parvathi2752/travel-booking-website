@@ -343,3 +343,245 @@ Made with ❤️ for travellers | Built with pure HTML, CSS & JavaScript
 ⭐ **Star this repository if you found it helpful!** ⭐
 
 </div>
+
+---
+
+## 🔧 Git Commands — Step by Step Guide
+
+> These are the exact commands used to put this project on GitHub.
+> Run them in your terminal / PowerShell from the project folder.
+
+---
+
+### 📌 STEP 1 — Check if Git is installed
+```bash
+git --version
+```
+**What it does:** Shows the installed Git version.
+If you see `git version 2.x.x` → Git is ready.
+If not → download from [https://git-scm.com](https://git-scm.com)
+
+---
+
+### 📌 STEP 2 — Tell Git who you are (one-time setup)
+```bash
+git config --global user.name "parvathi2752"
+git config --global user.email "your-email@example.com"
+```
+**What it does:** Every commit you make is stamped with your name
+and email. `--global` means this applies to all your Git projects.
+
+---
+
+### 📌 STEP 3 — Initialise a new Git repository
+```bash
+git init
+```
+**What it does:** Creates a hidden `.git/` folder inside your project.
+This folder is where Git stores all the version history.
+Think of it as turning on the "track changes" mode.
+
+> ✅ Already done — this project already has `.git/`
+
+---
+
+### 📌 STEP 4 — Check the status of your files
+```bash
+git status
+```
+**What it does:** Shows you which files are:
+- **Untracked** → new files Git doesn't know about yet (shown in red)
+- **Modified** → files you changed since the last commit (shown in red)
+- **Staged** → files ready to be committed (shown in green)
+
+Run this frequently — it's your "what's happening" command.
+
+---
+
+### 📌 STEP 5 — Stage (add) files for commit
+```bash
+# Add one specific file
+git add README.md
+
+# Add all files in the project at once
+git add .
+```
+**What it does:**
+`git add` moves files into the **staging area** — a waiting room
+before the actual commit. Think of it as packing items into a box
+before sealing it.
+
+`.` means "everything in the current folder and subfolders".
+
+---
+
+### 📌 STEP 6 — Commit (save a snapshot)
+```bash
+git commit -m "feat: Add TravelEase complete website"
+```
+**What it does:** Takes a permanent snapshot of everything in
+the staging area. The `-m` flag adds a message describing
+what changed.
+
+**Good commit message format:**
+```
+feat: Add new feature
+fix: Fix a bug
+docs: Update README
+style: Fix CSS formatting
+refactor: Improve code structure
+```
+
+---
+
+### 📌 STEP 7 — Create a new branch
+```bash
+git branch feature/dark-mode
+```
+**What it does:** Creates a new parallel version of your code
+called `feature/dark-mode`. Working on a branch means you can
+experiment without breaking the main code.
+
+```bash
+# Switch to that branch
+git checkout feature/dark-mode
+
+# Create AND switch in one command (shortcut)
+git checkout -b feature/dark-mode
+```
+
+---
+
+### 📌 STEP 8 — Connect to a GitHub repository (remote)
+```bash
+git remote add origin https://github.com/parvathi2752/travel-booking-website.git
+```
+**What it does:**
+- `remote add` → tells your local Git about a remote server
+- `origin` → the nickname for your GitHub repo (standard name)
+- The URL → the exact GitHub repository address
+
+> ✅ Already done — this project is already connected to:
+> `https://github.com/parvathi2752/travel-booking-website.git`
+
+Check it any time:
+```bash
+git remote -v
+```
+
+---
+
+### 📌 STEP 9 — Push (upload) to GitHub
+```bash
+git push origin main
+```
+**What it does:** Uploads your local commits to GitHub.
+- `origin` → the remote (GitHub)
+- `main` → the branch you're pushing to
+
+First-time push (sets up tracking):
+```bash
+git push -u origin main
+```
+After that, you can just type `git push`.
+
+---
+
+### 📌 STEP 10 — Pull (download) latest changes
+```bash
+git pull origin main
+```
+**What it does:** Downloads and merges any changes from GitHub
+into your local copy. Always do this before starting work if
+others might have pushed changes.
+
+---
+
+### 📌 Quick Reference — Full workflow from scratch
+
+```bash
+# 1. Initialise
+git init
+
+# 2. Set identity (one-time)
+git config --global user.name "parvathi2752"
+git config --global user.email "your-email@example.com"
+
+# 3. Stage all files
+git add .
+
+# 4. Commit with a message
+git commit -m "feat: Initial commit — TravelEase website"
+
+# 5. Create main branch (modern Git default)
+git branch -M main
+
+# 6. Connect to GitHub
+git remote add origin https://github.com/parvathi2752/travel-booking-website.git
+
+# 7. Push to GitHub
+git push -u origin main
+```
+
+---
+
+### 📌 Everyday workflow (after initial setup)
+
+```bash
+# Check what changed
+git status
+
+# Stage your changes
+git add .
+
+# Commit with a message
+git commit -m "fix: Correct price calculation formula"
+
+# Push to GitHub
+git push
+```
+
+---
+
+### 📌 Useful extra commands
+
+```bash
+# See all commits
+git log --oneline
+
+# See what changed in a file
+git diff index.html
+
+# Undo changes to a file (before staging)
+git restore index.html
+
+# See all branches
+git branch -a
+
+# Merge a branch into main
+git checkout main
+git merge feature/dark-mode
+
+# Delete a branch after merging
+git branch -d feature/dark-mode
+```
+
+---
+
+### 🌐 Enable GitHub Pages (free hosting)
+
+After pushing, activate GitHub Pages to get a live URL:
+
+```
+1. Go to: https://github.com/parvathi2752/travel-booking-website
+2. Click Settings (top tab)
+3. Click Pages (left sidebar)
+4. Under "Source" → select: Deploy from a branch
+5. Branch: main   Folder: / (root)
+6. Click Save
+
+Your site will be live at:
+https://parvathi2752.github.io/travel-booking-website/travel-booking/
+```
+
+> ⚠️ It may take 1–2 minutes for the page to go live after saving.
