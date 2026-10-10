@@ -25,35 +25,30 @@
 
 
 /* ================================================================
-   PART 1 — GRAB DOM ELEMENTS
-   ----------------------------------------------------------------
-   document.getElementById("someId") finds the HTML element
-   that has id="someId" and returns a reference to it.
-
-   We store each reference in a const variable so we can reuse
-   it later without searching the DOM every single time.
-   Searching the DOM is expensive — do it once, cache the result.
+   PART 1 — DOM ELEMENTS
+   Assigned inside init() after DOMContentLoaded so they are
+   never null when event listeners attach to them.
 ================================================================ */
 
-const hotelsGrid         = document.getElementById("hotelsGrid");
-const resultsCount       = document.getElementById("resultsCount");
-const hotelSearchInput   = document.getElementById("hotelSearchInput");
-const searchClearBtn     = document.getElementById("searchClearBtn");
-const priceFilter        = document.getElementById("priceFilter");
-const priceDisplay       = document.getElementById("priceDisplay");
-const sortSelect         = document.getElementById("sortSelect");
-const resetFiltersBtn    = document.getElementById("resetFiltersBtn");
-const activeFiltersDiv   = document.getElementById("activeFilters");
-const destinationFilters = document.getElementById("destinationFilters");
-const filterToggleBtn    = document.getElementById("filterToggleBtn");
-const filterOverlay      = document.getElementById("filterOverlay");
-const filterDrawer       = document.getElementById("filterDrawer");
-const filterDrawerClose  = document.getElementById("filterDrawerClose");
-const hamburgerBtn       = document.getElementById("hamburgerBtn");
-const navLinks           = document.getElementById("navLinks");
-const scrollTopBtn       = document.getElementById("scrollTopBtn");
-const toast              = document.getElementById("toast");
-const currentYearSpan    = document.getElementById("currentYear");
+var hotelsGrid         = null;
+var resultsCount       = null;
+var hotelSearchInput   = null;
+var searchClearBtn     = null;
+var priceFilter        = null;
+var priceDisplay       = null;
+var sortSelect         = null;
+var resetFiltersBtn    = null;
+var activeFiltersDiv   = null;
+var destinationFilters = null;
+var filterToggleBtn    = null;
+var filterOverlay      = null;
+var filterDrawer       = null;
+var filterDrawerClose  = null;
+var hamburgerBtn       = null;
+var navLinks           = null;
+var scrollTopBtn       = null;
+var toast              = null;
+var currentYearSpan    = null;
 
 
 /* ================================================================
@@ -69,7 +64,7 @@ const currentYearSpan    = document.getElementById("currentYear");
    to know exactly what filters are currently active.
 ================================================================ */
 
-const state = {
+var state = {
   searchQuery : "",        // text the user typed in the search box
   destination : "all",    // which destination button is active
   maxPrice    : 30000,    // maximum price from the slider
@@ -88,7 +83,27 @@ const state = {
 ================================================================ */
 
 function init() {
-  // Set the current year in the footer automatically
+  /* Assign DOM elements now — the page is fully loaded */
+  hotelsGrid         = document.getElementById("hotelsGrid");
+  resultsCount       = document.getElementById("resultsCount");
+  hotelSearchInput   = document.getElementById("hotelSearchInput");
+  searchClearBtn     = document.getElementById("searchClearBtn");
+  priceFilter        = document.getElementById("priceFilter");
+  priceDisplay       = document.getElementById("priceDisplay");
+  sortSelect         = document.getElementById("sortSelect");
+  resetFiltersBtn    = document.getElementById("resetFiltersBtn");
+  activeFiltersDiv   = document.getElementById("activeFilters");
+  destinationFilters = document.getElementById("destinationFilters");
+  filterToggleBtn    = document.getElementById("filterToggleBtn");
+  filterOverlay      = document.getElementById("filterOverlay");
+  filterDrawer       = document.getElementById("filterDrawer");
+  filterDrawerClose  = document.getElementById("filterDrawerClose");
+  hamburgerBtn       = document.getElementById("hamburgerBtn");
+  navLinks           = document.getElementById("navLinks");
+  scrollTopBtn       = document.getElementById("scrollTopBtn");
+  toast              = document.getElementById("toast");
+  currentYearSpan    = document.getElementById("currentYear");
+
   if (currentYearSpan) {
     currentYearSpan.textContent = new Date().getFullYear();
   }
@@ -491,7 +506,7 @@ function hotelMatchesSearch(hotel, query) {
 
   // Step 1: convert the query to lowercase.
   // This means "GOA", "Goa", "goa" all become "goa".
-  const q = query.toLowerCase();
+  var q = query.toLowerCase();
 
   // Step 2: convert each hotel field to lowercase too.
   // Now both sides are lowercase — comparison is case-insensitive.
@@ -506,7 +521,7 @@ function hotelMatchesSearch(hotel, query) {
   // "taj exotica resort & spa goa benaulim beach, south goa"
   //                           ^^^                      ^^^
   //                     destination matches!      location matches!
-  const searchBlob = nameLC + " " + destinationLC + " " + locationLC;
+  var searchBlob = nameLC + " " + destinationLC + " " + locationLC;
 
   // Step 4: check if the query appears anywhere in the blob.
   // .includes() returns true/false.

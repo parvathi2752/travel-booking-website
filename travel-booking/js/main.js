@@ -480,7 +480,7 @@ function initNewsletter() {
 ================================================================ */
 
 /* One shared observer instance for the whole page */
-const scrollObserver = new IntersectionObserver(
+var scrollObserver = new IntersectionObserver(
   function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {

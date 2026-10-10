@@ -1,53 +1,12 @@
 /* ================================================================
-   TravelEase — data.js
-   ----------------------------------------------------------------
-   This file is our "mini database".
-   No backend, no SQL, no server — just plain JavaScript.
-
-   CONCEPT: JavaScript Objects
-   -----------------------------------------------
-   An object stores related data together using key: value pairs.
-   Think of it like a hotel registration form — every field
-   (name, city, price) is a key, and what you fill in is the value.
-
-     let hotel = {
-       name: "Grand Palace",      ← string value
-       pricePerNight: 3500,       ← number value
-       available: true,           ← boolean value
-       amenities: ["WiFi","Pool"] ← array value (a list)
-     };
-
-   CONCEPT: JavaScript Arrays
-   -----------------------------------------------
-   An array is an ordered list, written with square brackets [].
-   We use an array to hold ALL our hotel objects together.
-
-     let hotels = [ hotel1, hotel2, hotel3 ];
-     hotels[0]      → first hotel
-     hotels.length  → total count
-
-   WHY STORE DATA HERE?
-   -----------------------------------------------
-   Other JS files (main.js, hotels.js, booking.js) will import
-   this data and use it to build the page dynamically.
-   Keeping data separate from logic is a professional pattern
-   called "Separation of Concerns".
+   TravelEase — data.js  (FIXED: const → var to prevent
+   "already declared" crash when multiple pages share scope)
 ================================================================ */
 
+/* Guard: only declare once even if script loads twice */
+if (typeof destinations === "undefined") {
 
-/* ================================================================
-   DESTINATIONS DATA
-   ----------------------------------------------------------------
-   Each destination object has:
-   • id         – unique identifier (used in URL params)
-   • name       – display name
-   • tagline    – short catchy description
-   • image      – Unsplash photo URL (free, no login needed)
-   • hotelCount – shown on destination card
-   • gradient   – CSS gradient fallback if image is slow to load
-================================================================ */
-
-const destinations = [
+var destinations = [
   {
     id: "goa",
     name: "Goa",
@@ -98,31 +57,9 @@ const destinations = [
   }
 ];
 
+var hotels = [
 
-/* ================================================================
-   HOTELS DATA
-   ----------------------------------------------------------------
-   Each hotel object has these properties:
-
-   id             – unique string, used in URLs (?hotel=taj-goa)
-   name           – full hotel name
-   destination    – must match a destination id above
-   location       – specific area within the city
-   image          – high-quality Unsplash photo URL
-   rating         – number between 1.0 and 5.0
-   reviewCount    – number of reviews (adds realism)
-   pricePerNight  – price in Indian Rupees (₹)
-   originalPrice  – crossed-out "was" price (shows discount)
-   category       – "Luxury" | "Premium" | "Budget"
-   description    – 1-2 sentence summary
-   amenities      – array of strings (shown as icon tags)
-   availableRooms – number (used in booking validation)
-   isFeatured     – boolean (true = shown on homepage)
-================================================================ */
-
-const hotels = [
-
-  /* ── GOA ──────────────────────────────────────────────── */
+  /* ── GOA ── */
   {
     id: "taj-exotica-goa",
     name: "Taj Exotica Resort & Spa",
@@ -172,7 +109,7 @@ const hotels = [
     isFeatured: false
   },
 
-  /* ── HYDERABAD ───────────────────────────────────────── */
+  /* ── HYDERABAD ── */
   {
     id: "taj-falaknuma",
     name: "Taj Falaknuma Palace",
@@ -222,7 +159,7 @@ const hotels = [
     isFeatured: false
   },
 
-  /* ── BENGALURU ────────────────────────────────────────── */
+  /* ── BENGALURU ── */
   {
     id: "leela-palace-bengaluru",
     name: "The Leela Palace Bengaluru",
@@ -256,7 +193,7 @@ const hotels = [
     isFeatured: false
   },
 
-  /* ── CHENNAI ─────────────────────────────────────────── */
+  /* ── CHENNAI ── */
   {
     id: "itc-grand-chola",
     name: "ITC Grand Chola",
@@ -290,7 +227,7 @@ const hotels = [
     isFeatured: false
   },
 
-  /* ── DELHI ───────────────────────────────────────────── */
+  /* ── DELHI ── */
   {
     id: "the-imperial-delhi",
     name: "The Imperial New Delhi",
@@ -324,7 +261,7 @@ const hotels = [
     isFeatured: false
   },
 
-  /* ── KERALA ──────────────────────────────────────────── */
+  /* ── KERALA ── */
   {
     id: "kumarakom-lake-resort",
     name: "Kumarakom Lake Resort",
@@ -357,80 +294,41 @@ const hotels = [
     availableRooms: 18,
     isFeatured: true
   }
-
 ];
-/* ── End of hotels array ─────────────────────────────────── */
 
+} /* end guard */
 
 /* ================================================================
    HELPER FUNCTIONS
-   ----------------------------------------------------------------
-   These functions make it easy for other JS files to query
-   the data above without repeating filter/find logic everywhere.
-
-   CONCEPT: Array methods
-   -----------------------------------------------
-   .filter()  → returns a NEW array with items that pass a test
-   .find()    → returns the FIRST item that passes a test
-   .sort()    → sorts the array (we create a copy first with [...])
-
-   Example:
-     hotels.filter(h => h.destination === "goa")
-     → returns all hotels where destination equals "goa"
+   (These are function declarations — safe to redeclare)
 ================================================================ */
 
-/**
- * Get all hotels for a specific destination.
- * @param {string} destinationId  e.g. "goa"
- * @returns {Array} filtered hotels array
- */
 function getHotelsByDestination(destinationId) {
   return hotels.filter(function(hotel) {
     return hotel.destination === destinationId;
   });
 }
 
-/**
- * Get a single hotel by its unique id.
- * @param {string} hotelId  e.g. "taj-exotica-goa"
- * @returns {Object|undefined} hotel object or undefined if not found
- */
 function getHotelById(hotelId) {
   return hotels.find(function(hotel) {
     return hotel.id === hotelId;
   });
 }
 
-/**
- * Get the featured hotels shown on the homepage.
- * @returns {Array} hotels where isFeatured is true
- */
 function getFeaturedHotels() {
   return hotels.filter(function(hotel) {
     return hotel.isFeatured === true;
   });
 }
 
-/**
- * Get hotels filtered by category.
- * @param {string} category  "Luxury" | "Premium" | "Budget"
- * @returns {Array}
- */
 function getHotelsByCategory(category) {
   return hotels.filter(function(hotel) {
     return hotel.category === category;
   });
 }
 
-/**
- * Search hotels by name or location (case-insensitive).
- * @param {string} query  user's search text
- * @returns {Array}
- */
 function searchHotels(query) {
-  // Convert to lowercase so "GOA" matches "goa"
-  const lowerQuery = query.toLowerCase();
-
+  var lowerQuery = query.toLowerCase();
   return hotels.filter(function(hotel) {
     return (
       hotel.name.toLowerCase().includes(lowerQuery)        ||
@@ -440,72 +338,31 @@ function searchHotels(query) {
   });
 }
 
-/**
- * Sort hotels by a given field.
- * @param {Array}  hotelList  the array to sort
- * @param {string} sortBy     "price-low" | "price-high" | "rating" | "name"
- * @returns {Array} new sorted array (original is not mutated)
- */
 function sortHotels(hotelList, sortBy) {
-  // [...hotelList] creates a shallow copy so we don't modify the original
-  const sorted = [...hotelList];
-
-  if (sortBy === "price-low") {
-    sorted.sort(function(a, b) { return a.pricePerNight - b.pricePerNight; });
-  } else if (sortBy === "price-high") {
-    sorted.sort(function(a, b) { return b.pricePerNight - a.pricePerNight; });
-  } else if (sortBy === "rating") {
-    sorted.sort(function(a, b) { return b.rating - a.rating; });
-  } else if (sortBy === "name") {
-    sorted.sort(function(a, b) { return a.name.localeCompare(b.name); });
-  }
-
+  var sorted = hotelList.slice(); /* copy without mutating original */
+  if (sortBy === "price-low")  sorted.sort(function(a,b){ return a.pricePerNight - b.pricePerNight; });
+  if (sortBy === "price-high") sorted.sort(function(a,b){ return b.pricePerNight - a.pricePerNight; });
+  if (sortBy === "rating")     sorted.sort(function(a,b){ return b.rating - a.rating; });
+  if (sortBy === "name")       sorted.sort(function(a,b){ return a.name.localeCompare(b.name); });
   return sorted;
 }
 
-/**
- * Format a number as Indian Rupees.
- * e.g. 12500 → "₹12,500"
- * @param {number} amount
- * @returns {string}
- */
 function formatPrice(amount) {
-  return "₹" + amount.toLocaleString("en-IN");
+  return "\u20B9" + amount.toLocaleString("en-IN");
 }
 
-/**
- * Generate star HTML string from a rating number.
- * e.g. 4.6 → "★★★★½"  (using filled, half, empty unicode symbols)
- * @param {number} rating  e.g. 4.6
- * @returns {string} HTML string for the stars
- */
 function generateStarHTML(rating) {
-  let starsHTML = "";
-  const fullStars = Math.floor(rating);       // 4.6 → 4 full stars
-  const hasHalf   = (rating % 1) >= 0.5;     // 4.6 → true
-  const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
-
-  // Full stars
-  for (let i = 0; i < fullStars; i++) {
-    starsHTML += '<i class="fa-solid fa-star" aria-hidden="true"></i>';
-  }
-  // Half star
-  if (hasHalf) {
-    starsHTML += '<i class="fa-solid fa-star-half-stroke" aria-hidden="true"></i>';
-  }
-  // Empty stars
-  for (let i = 0; i < emptyStars; i++) {
-    starsHTML += '<i class="fa-regular fa-star" aria-hidden="true"></i>';
-  }
-
+  var starsHTML  = "";
+  var fullStars  = Math.floor(rating);
+  var hasHalf    = (rating % 1) >= 0.5;
+  var emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+  var i;
+  for (i = 0; i < fullStars;  i++) starsHTML += '<i class="fa-solid fa-star" aria-hidden="true"></i>';
+  if (hasHalf)                      starsHTML += '<i class="fa-solid fa-star-half-stroke" aria-hidden="true"></i>';
+  for (i = 0; i < emptyStars; i++) starsHTML += '<i class="fa-regular fa-star" aria-hidden="true"></i>';
   return starsHTML;
 }
 
-/**
- * Get a destination object by id.
- * @param {string} destinationId
- * @returns {Object|undefined}
- */
 function getDestinationById(destinationId) {
   return destinations.find(function(dest) {
     return dest.id === destinationId;
