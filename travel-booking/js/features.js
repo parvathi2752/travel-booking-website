@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
   Feature07_FilterCount.init();
   Feature10_BackToTop.init();
   Feature11_ScrollAnimations.init();
-  Feature12_MobileMenu.init();
-  /* 08 and 09 are utility functions called from other files */
+  /* Feature12_MobileMenu disabled — each page has its own initNavbar()
+     which handles the hamburger. Running both caused double-toggle bug. */
 });
 
 

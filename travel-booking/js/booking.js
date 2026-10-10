@@ -25,34 +25,28 @@
 
 
 /* ================================================================
-   PART 1 — CACHE DOM ELEMENTS
-   ----------------------------------------------------------------
-   We grab every element we need once at the top.
-   Re-using these cached references is faster than calling
-   document.getElementById() repeatedly inside functions.
+   PART 1 — DOM ELEMENT REFERENCES
+   Declared here, assigned inside DOMContentLoaded so the DOM
+   exists when getElementById is called.
 ================================================================ */
 
-var form             = document.getElementById("bookingForm");
-var submitBtn        = document.getElementById("submitBtn");
-var summaryContent   = document.getElementById("summaryContent");
-var currentYearSpan  = document.getElementById("currentYear");
-var toastEl          = document.getElementById("toast");
-var scrollTopBtn     = document.getElementById("scrollTopBtn");
-
-// Form fields
-var fullNameInput    = document.getElementById("fullName");
-var emailInput       = document.getElementById("email");
-var phoneInput       = document.getElementById("phone");
-var destSelect       = document.getElementById("destinationSelect");
-var hotelSelect      = document.getElementById("hotelSelect");
-var checkinInput     = document.getElementById("checkinDate");
-var checkoutInput    = document.getElementById("checkoutDate");
-var guestsInput      = document.getElementById("guestsInput");
-var roomsInput       = document.getElementById("roomsInput");
-var specialInput     = document.getElementById("specialRequests");
-
-// Error elements
-var formLevelError   = document.getElementById("form-level-error");
+var form             = null;
+var submitBtn        = null;
+var summaryContent   = null;
+var currentYearSpan  = null;
+var toastEl          = null;
+var scrollTopBtn     = null;
+var fullNameInput    = null;
+var emailInput       = null;
+var phoneInput       = null;
+var destSelect       = null;
+var hotelSelect      = null;
+var checkinInput     = null;
+var checkoutInput    = null;
+var guestsInput      = null;
+var roomsInput       = null;
+var specialInput     = null;
+var formLevelError   = null;
 
 
 /* ================================================================
@@ -60,6 +54,25 @@ var formLevelError   = document.getElementById("form-level-error");
 ================================================================ */
 
 document.addEventListener("DOMContentLoaded", function () {
+  /* Assign DOM references now — the page is fully parsed */
+  form             = document.getElementById("bookingForm");
+  submitBtn        = document.getElementById("submitBtn");
+  summaryContent   = document.getElementById("summaryContent");
+  currentYearSpan  = document.getElementById("currentYear");
+  toastEl          = document.getElementById("toast");
+  scrollTopBtn     = document.getElementById("scrollTopBtn");
+  fullNameInput    = document.getElementById("fullName");
+  emailInput       = document.getElementById("email");
+  phoneInput       = document.getElementById("phone");
+  destSelect       = document.getElementById("destinationSelect");
+  hotelSelect      = document.getElementById("hotelSelect");
+  checkinInput     = document.getElementById("checkinDate");
+  checkoutInput    = document.getElementById("checkoutDate");
+  guestsInput      = document.getElementById("guestsInput");
+  roomsInput       = document.getElementById("roomsInput");
+  specialInput     = document.getElementById("specialRequests");
+  formLevelError   = document.getElementById("form-level-error");
+
   if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
   setDateDefaults();          // set min dates + sensible default dates
@@ -752,7 +765,8 @@ function buildBookingObject() {
     taxes           : taxes,
     taxRate         : 5,
     totalPrice      : totalPrice,
-    currency        : "INR"
+    currency        : "INR",
+    status          : "Confirmed"
   };
 }
 
